@@ -1,0 +1,118 @@
+/* 전체 챗봇 UI 컨테이너 크기 조정 */
+.react-chatbot-kit-chat-container {
+  width: 90%;
+  display: flex;
+  justify-content: center;
+}
+
+.react-chatbot-kit-chat-inner-container {
+  width: 80%; /* 화면 너비의 80% 사용 */
+  max-width: 900px; /* 최대 너비 설정 */
+  height: 95%; /* 화면 높이의 80% 사용 */
+  flex-direction: column; /* 세로로 쌓기 */
+  /* justify-content: flex-start;  */
+  justify-content: space-between; /* 메시지 영역과 입력창을 위아래로 배치 */
+  align-items: center; /* 가로 중심 정렬 */
+}
+
+.react-chatbot-kit-chat-header {
+}
+
+/* 메시지 영역 크기 조정 */
+.react-chatbot-kit-chat-bot-message-container {
+  display: flex;
+  align-items: flex-start; /* 메시지 박스를 왼쪽 정렬 */
+  max-width: max-content;
+}
+
+/* 입력창 컨테이너 크기 조정 */
+.react-chatbot-kit-chat-input-container {
+  display: flex; /* Flexbox로 정렬 */
+  justify-content: center; /* 가로 중앙 정렬 */
+  align-items: center; /* 세로 중앙 정렬 */
+  width: inherit;
+  padding: 10px 0px; 
+  background-color: #f9f9f9; /* 배경색 추가 */
+  border-top: 1px solid #ccc; /* 상단 구분선 */
+}
+
+.react-chatbot-kit-chat-input {
+  flex: 1;
+  max-width: 80%;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 10px;
+  margin-right: 10px;
+}
+
+.react-chatbot-kit-chat-input-form {
+  display: flex; /* Flexbox로 정렬 */
+  justify-content: center;
+}
+
+.react-chatbot-kit-chat-input::placeholder {
+  color: #aaa;
+}
+
+/* 전송 버튼 스타일링 */
+.react-chatbot-kit-chat-btn-send {
+  max-width: 70px;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  justify-content: center;
+}
+
+.react-chatbot-kit-chat-btn-send:hover {
+  background-color: #0056b3;
+}
+
+.react-chatbot-kit-chat-btn-send-icon {
+}
+
+.react-chatbot-kit-chat-bot-avatar-container {
+}
+
+.react-chatbot-kit-chat-bot-avatar-icon {
+}
+
+.react-chatbot-kit-chat-bot-avatar-letter {
+}
+
+.react-chatbot-kit-chat-bot-message {
+  justify-content: left;
+  max-width: 80%; /* 메시지 너비 제한 */
+}
+
+.react-chatbot-kit-chat-bot-message-arrow {
+}
+
+.react-chatbot-kit-chat-bot-loading-icon-container {
+}
+
+.chatbot-loader-container {
+}
+
+#chatbot-loader #chatbot-loader-dot1 {
+}
+
+#chatbot-loader #chatbot-loader-dot2 {
+}
+
+#chatbot-loader #chatbot-loader-dot3 {
+}
+
+.react-chatbot-kit-error {
+}
+
+.react-chatbot-kit-error-container {
+}
+
+.react-chatbot-kit-error-header {
+}
+
+.react-chatbot-kit-error-docs {
+}
