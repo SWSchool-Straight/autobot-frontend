@@ -7,7 +7,7 @@
 
 .react-chatbot-kit-chat-inner-container {
   width: 80%; /* 화면 너비의 80% 사용 */
-  max-width: 900px; /* 최대 너비 설정 */
+  max-width: 1000px; /* 최대 너비 설정 */
   height: 95%; /* 화면 높이의 80% 사용 */
   flex-direction: column; /* 세로로 쌓기 */
   /* justify-content: flex-start;  */
