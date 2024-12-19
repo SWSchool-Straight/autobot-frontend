@@ -4,6 +4,7 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import App from './App';
 import DashboardPage from './pages';
 import ChatbotPage from './pages/ChatbotPage';
+import HistoryPage from './pages/HistoryPage';
 import Layout from './layouts/dashboard';
 
 const router = createBrowserRouter([
@@ -22,6 +23,10 @@ const router = createBrowserRouter([
               path: 'chatbot',
               Component: ChatbotPage,
             },
+            {
+              path: 'history',
+              Component: HistoryPage,
+            }
           ],
         },
       ],

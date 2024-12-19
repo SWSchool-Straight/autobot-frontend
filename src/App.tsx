@@ -1,6 +1,7 @@
 import * as React from 'react';
 import DashboardIcon from '@mui/icons-material/Dashboard';
-import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
+import SmsRoundedIcon from '@mui/icons-material/SmsRounded';
+import DirectionsCarFilledIcon from '@mui/icons-material/DirectionsCarFilled';
 import { AppProvider } from '@toolpad/core/react-router-dom';
 import { Outlet } from 'react-router-dom';
 import type { Navigation } from '@toolpad/core';
@@ -17,8 +18,13 @@ const NAVIGATION: Navigation = [
   {
     segment: 'chatbot',
     title: 'Chatbot',
-    icon: <ShoppingCartIcon />,
+    icon: <SmsRoundedIcon />,
   },
+  {
+    segment: 'history',
+    title: '최근 본 차량',
+    icon:  <DirectionsCarFilledIcon />,
+  }
 ];
 
 const BRANDING = {
