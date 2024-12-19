@@ -1,0 +1,15 @@
+{
+    "compilerOptions": {
+      "jsx": "react-jsx", // React JSX 지원
+      "allowJs": true, // JS 파일 허용
+      "esModuleInterop": true,
+      "target": "esnext",
+      "module": "esnext",
+      "moduleResolution": "node",
+      "resolveJsonModule": true,
+      "lib": ["dom", "dom.iterable", "esnext"]
+    },
+    "include": ["src"],
+    "exclude": ["node_modules"]
+  }
+  
