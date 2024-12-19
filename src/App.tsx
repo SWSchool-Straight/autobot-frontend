@@ -22,7 +22,8 @@ const NAVIGATION: Navigation = [
 ];
 
 const BRANDING = {
-  title: 'My Toolpad Core App',
+    logo: <img src="src/assets/logo.png" alt="hyundai logo" />,
+    title: 'Chatbot',
 };
 
 export default function App() {
