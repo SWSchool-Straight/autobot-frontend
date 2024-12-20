@@ -33,9 +33,10 @@ const router = createBrowserRouter([
     },
   ]);
 
-ReactDOM.createRoot(document.getElementById('root')!).render(
+// App 컴포넌트 렌더링 (라우터 설정 포함)
+const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement);
+root.render(
   <React.StrictMode>
     <RouterProvider router={router} />
-  </React.StrictMode>,
+  </React.StrictMode>
 );
-

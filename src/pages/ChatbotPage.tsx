@@ -1,12 +1,13 @@
-import Chatbot from 'react-chatbot-kit';
+import React from 'react';
 import 'react-chatbot-kit/build/main.css';
-import '../styles/chatbot-custom.css'; 
+import '../styles/chatbot-custom.css';
 
+import Chatbot from 'react-chatbot-kit';
 import config from "../bot/config";
 import MessageParser from "../bot/MessageParser";
 import ActionProvider from "../bot/ActionProvider";
 
-export default function ChatbotPage() {
+const ChatbotPage= () => {
   return (
     <Chatbot
       config={config}
@@ -15,3 +16,5 @@ export default function ChatbotPage() {
     />
   );
 }
+
+export default ChatbotPage;

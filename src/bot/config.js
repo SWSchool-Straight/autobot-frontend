@@ -1,4 +1,5 @@
 import { createChatBotMessage } from 'react-chatbot-kit';
+import ChatbotAvatar from '../components/ChatbotAvatar';
 
 const config = {
   initialMessages: [
@@ -17,8 +18,11 @@ const config = {
       backgroundColor: '#386596',
     },
     chatButton: {
-      backgroundColor: '#5ccc9d',
+      backgroundColor: '#86D2FF',
     },
+  },
+  customComponents: {
+    botAvatar: ChatbotAvatar,
   },
 };
 
