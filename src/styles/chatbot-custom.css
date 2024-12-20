@@ -9,6 +9,7 @@
 
 .react-chatbot-kit-chat-inner-container {
   height: 100% !important;
+  min-height: calc(100vh - 200px);
   display: flex;
   flex-direction: column; /* 세로로 쌓기 */
   justify-content: space-between; /* 메시지 영역과 입력창을 위아래로 배치 */
@@ -28,7 +29,7 @@
 .react-chatbot-kit-chat-message-container {
   flex: 1; /* 남은 공간을 모두 차지하도록 설정 */
   min-height: 0; /* 최소 높이를 0으로 설정하여 스크롤이 정상 작동하도록 함 */
-  max-height: calc(100vh - 300px); /* 뷰포트 높이의 80%로 제한 */
+  max-height: calc(100vh - 300px);
   overflow-y: auto !important;
   margin-bottom: 5px; /* 입력창과의 간격 */
 }
@@ -96,6 +97,7 @@
   justify-content: left;
   width: fit-content;
   max-width: 700px;
+  white-space: pre-line;  /* 줄바꿈 허용 */
 }
 
 .react-chatbot-kit-chat-bot-message-arrow {
