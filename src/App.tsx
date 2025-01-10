@@ -32,24 +32,15 @@ const BRANDING = {
   title: 'Chatbot',
 };
 
-function SignInButtonComponent() {
-  const navigate = useNavigate();
-
-  return (
-    <button
-      onClick={() => navigate('login')}
-    >
-      로그인
-    </button>
-  );
-}
-
-const AUTHENTICATION = {
-  signIn: () => <SignInButtonComponent />,
-  signOut: () => <button>로그아웃</button>,
-};
-
+const createAuthentication = (navigate) => ({
+  signIn: () => {
+    navigate("login");
+  },
+  signOut: () => null,
+});
 export default function App() {
+  const navigate = useNavigate();
+  const AUTHENTICATION = createAuthentication(navigate);
   return (
     <AppProvider
       navigation={NAVIGATION}

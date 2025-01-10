@@ -62,8 +62,8 @@ form {
   max-width: 680px;
   height: 60px;
   margin: 0 auto;
-  border-radius: 8px;
-  border: 1px solid #a3adb3;
+  border-radius: 18px;
+  border: 2px solid #a3adb3;
   background: rgb(255, 255, 255);
   color: rgba(15, 19, 42, 0.3);
   padding: 0 0 0 15px;
@@ -74,18 +74,18 @@ form {
 .input__block input:focus,
 .input__block input:active {
   outline: none;
-  border: 1px solid #45a8d6;
+  border: 2px solid #45a8d6;
   color: rgba(15, 19, 42, 1);
 }
 
 .auth__btn {
-  background: #45a8d6;
+  background: #57b6e2;
   color: white;
   display: block;
   width: 52.5%;
   max-width: 680px;
   height: 60px;
-  border-radius: 8px;
+  border-radius: 18px;
   margin: 20px auto;
   border: none;
   cursor: pointer;
@@ -99,13 +99,13 @@ form {
 }
 
 .signin__btn {
-  background: #45a8d6;
+  background: #57b6e2;
   color: white;
   display: block;
   width: 52.5%;
   max-width: 680px;
   height: 60px;
-  border-radius: 8px;
+  border-radius: 18px;
   margin: 20px auto;
   border: none;
   cursor: pointer;

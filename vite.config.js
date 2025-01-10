@@ -9,3 +9,6 @@ export default defineConfig({
     extensions: ['.js', '.jsx', '.ts', '.tsx'], // JSX와 TSX 모두 지원
   },
 })
+
+
+
