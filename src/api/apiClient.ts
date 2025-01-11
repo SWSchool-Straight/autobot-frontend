@@ -6,8 +6,8 @@ export const authApiClient = axios.create({
   headers: {
     "Content-Type": "application/json",
   },
-  timeout: 5000,
   withCredentials: true,
+  timeout: 5000,
 }); 
 
 // 채팅 관련 API 클라이언트
@@ -16,6 +16,6 @@ export const chatApiClient = axios.create({
   headers: {
     "Content-Type": "application/json",
   },
-  timeout: 5000,
   withCredentials: true,
+  timeout: 5000,
 }); 
