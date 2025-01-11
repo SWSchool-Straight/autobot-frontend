@@ -5,6 +5,7 @@ import DirectionsCarFilledIcon from '@mui/icons-material/DirectionsCarFilled';
 import { AppProvider } from '@toolpad/core/react-router-dom';
 import { Outlet, useNavigate } from 'react-router-dom';
 import type { Navigation } from '@toolpad/core';
+import { AuthProvider, useAuth } from './contexts/AuthContext';
 
 const NAVIGATION: Navigation = [
   {
@@ -32,22 +33,46 @@ const BRANDING = {
   title: 'Chatbot',
 };
 
-const createAuthentication = (navigate) => ({
-  signIn: () => {
-    navigate("login");
-  },
-  signOut: () => null,
-});
-export default function App() {
+const AppContent = () => {
   const navigate = useNavigate();
-  const AUTHENTICATION = createAuthentication(navigate);
+  const { isAuthenticated, logout, user } = useAuth();
+
+  const session = {
+    user: {
+      email: user?.email,
+      name: user?.name,
+    },
+  };
+
+  const AUTHENTICATION = {
+    signIn: () => navigate('/login'),
+    signOut: () => {
+      logout();
+      navigate('/login');
+    },
+    isAuthenticated,
+    labels: {
+      signIn: '로그인',
+      signOut: '로그아웃'
+    }
+  };
+
   return (
     <AppProvider
       navigation={NAVIGATION}
       branding={BRANDING}
+      session={session}
       authentication={AUTHENTICATION}
     >
       <Outlet />
     </AppProvider>
+  );
+};
+
+export default function App() {
+  return (
+    <AuthProvider>
+      <AppContent />
+    </AuthProvider>
   );
 }

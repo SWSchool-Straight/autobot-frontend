@@ -1,40 +1,20 @@
 import axios from "axios";
-
-const apiClient = axios.create({
-  baseURL: import.meta.env.VITE_LOGIN_BASE_URL,
-  headers: {
-    "Content-Type": "application/json",
-  },
-  timeout: 5000,
-  withCredentials: true, // 기본 설정으로 쿠키 포함
-});
-
-// 회원가입 API 호출 함수
-export const registerMember = async (data: any) => {
-    try {
-        const response = await apiClient.post("/members/register", data)
-        console.log("응답 헤더:", response.headers); // 응답 헤더 출력
-        return response.data;
-    } catch (error) {
-        if (axios.isAxiosError(error)) {
-        console.error("에러 상세:", error.response?.data); // 에러 상세 로그
-    }
-    throw error.response?.data?.message || "회원가입 요청에 실패했습니다.";
-  }
-};
+import { authApiClient } from "./api";
 
 // 로그인 API 호출 함수
-export const loginMember = async (data: any) => {
+export const login = async (data: any) => {
     try {
-        const response = await apiClient.post("/members/login", data);
-        console.log("응답 헤더:", response.headers); // 응답 헤더 출력
+        const response = await authApiClient.post('/api/members/login', data);
         return response.data;
     } catch (error) {
         if (axios.isAxiosError(error)) {
-        console.error("에러 상세:", error.response?.data); // 에러 상세 로그
-      }
-      throw error.response?.data?.message || "로그인 요청에 실패했습니다.";
+            console.error("로그인 에러:", {
+                status: error.response?.status,
+                data: error.response?.data,
+                message: error.message
+            });
+            throw new Error(error.response?.data?.message || "로그인 요청에 실패했습니다.");
+        }
+        throw new Error("로그인 중 알 수 없는 오류가 발생했습니다.");
     }
-};
-
-
+}; 

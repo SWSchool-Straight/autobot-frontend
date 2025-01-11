@@ -7,7 +7,7 @@ export default function Layout() {
   return (
     <DashboardLayout>
       <PageContainer>
-        <Outlet />
+          <Outlet />
       </PageContainer>
     </DashboardLayout>
   );

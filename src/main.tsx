@@ -1,49 +1,48 @@
-import * as React from 'react';
-import * as ReactDOM from 'react-dom/client';
+import React from 'react';
+import ReactDOM from 'react-dom/client';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import App from './App';
-import DashboardPage from './pages';
+import Layout from './layouts/Dashboard';
 import ChatbotPage from './pages/ChatbotPage';
 import HistoryPage from './pages/HistoryPage';
-import Layout from './layouts/dashboard';
-import LoginPage from './pages/LoginPage';
-
+import SignInPage from './pages/SignInPage';
+import SignUpPage from './pages/SignUpPage';
+import { AuthProvider } from './contexts/AuthContext';
 const router = createBrowserRouter([
-  // 독립된 로그인 페이지
   {
-    path: 'login',
-    Component: LoginPage,
-  },
-  // App과 관련된 모든 경로
-  {
-    Component: App,
+    path: '/',
+    element: <App />,
     children: [
       {
         path: '/',
         Component: Layout,
         children: [
           {
-            path: '',
-            Component: DashboardPage,
-          },
-          {
             path: 'chatbot',
-            Component: ChatbotPage,
+            element: <ChatbotPage />,
           },
           {
             path: 'history',
-            Component: HistoryPage,
+            element: <HistoryPage />,
           },
         ],
       },
     ],
   },
+  {
+    path: '/login',
+    element: <SignInPage />,
+  },
+  {
+    path: '/signup',
+    element: <SignUpPage />,
+  },
 ]);
 
-// App 컴포넌트 렌더링 (라우터 설정 포함)
-const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement);
-root.render(
+ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
-    <RouterProvider router={router} />
+    <AuthProvider>
+      <RouterProvider router={router} />
+    </AuthProvider>
   </React.StrictMode>
 );
