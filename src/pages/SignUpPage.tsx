@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { register } from "../services/registerService";
 import "../styles/LoginPage.css";
+import { RegisterRequest } from "../api/registerApi";
 
 const SignUpPage: React.FC = () => {
   const [currentStep, setCurrentStep] = useState(1);
@@ -36,7 +37,7 @@ const SignUpPage: React.FC = () => {
         return;
     }
 
-    const signupData = {
+    const signupData: RegisterRequest = {
         email,
         password,
         name,
