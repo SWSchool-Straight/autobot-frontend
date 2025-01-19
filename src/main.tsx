@@ -1,11 +1,11 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
+import * as React from 'react';
+import * as ReactDOM from 'react-dom/client';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import App from './App';
 import Layout from './layouts/Dashboard';
 import ChatbotPage from './pages/ChatbotPage';
 import HistoryPage from './pages/HistoryPage';
-import SignInPage from './pages/SignInPage';
+import SignInPage from './pages/LoginPage';
 import SignUpPage from './pages/SignUpPage';
 import { AuthProvider } from './contexts/AuthContext';
 const router = createBrowserRouter([
