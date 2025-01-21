@@ -14,7 +14,7 @@ export interface LoginResponse {
 }
 
 // 로그인 API 호출 함수
-export const login = (data: LoginRequest): Promise<AxiosResponse<ApiResponse<LoginResponse>>> => {
+export const loginApi = (data: LoginRequest): Promise<AxiosResponse<ApiResponse<LoginResponse>>> => {
     return authApiClient.post('/api/members/login', data);
 };
 

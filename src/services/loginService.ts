@@ -1,6 +1,7 @@
 import axios from "axios";
-import { LoginRequest, login, setAccessToken } from "../api/loginApi";
+import { LoginRequest, loginApi, setAccessToken } from "../api/loginApi";
 import { authApiClient } from "../api/apiClient";
+import { setCurrentEmail } from './refreshService';
 
 // Hook들을 직접 사용하지 않고 함수의 매개변수로 받도록 수정
 export const handleLoginSubmit = async(
@@ -28,7 +29,7 @@ export const handleLogin = async (data: LoginRequest) => {
     try {
         console.log('로그인 요청 데이터:', data);   
         
-        const response = await login(data);  // loginApi.ts에서 호출
+        const response = await loginApi(data);
         console.log('서버 응답 전체:', response);
         console.log('응답 헤더:', response.headers);
         
@@ -47,6 +48,9 @@ export const handleLogin = async (data: LoginRequest) => {
         
         // 기존 authApiClient의 헤더 확인
         console.log('설정된 Authorization 헤더:', authApiClient.defaults.headers.common['Authorization']);
+
+        // 이메일 저장
+        setCurrentEmail(data.email);
 
         return response.data;
     } catch (error) {
