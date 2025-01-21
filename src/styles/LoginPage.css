@@ -1,0 +1,160 @@
+body {
+  font-family: 'Montserrat', sans-serif;
+  background: white;
+}
+
+.container {
+  display: block;
+  max-width: 680px;
+  width: 80%;
+  margin: 120px auto;
+}
+
+h1 {
+  color: #1c3475;
+  font-size: 48px;
+  letter-spacing: -3px;
+  text-align: center;
+  margin: 120px 0 80px 0;
+  transition: 0.2s linear;
+}
+
+.links {
+  margin: 0 130px; 
+  list-style-type: none;
+}
+
+.links li {
+  display: inline-block;
+  margin: 0 20px 0 0;
+  transition: 0.2s linear;
+}
+
+.links a {
+  text-decoration: none;
+  color: #9fa3b6be;
+  font-weight: bolder;
+  text-align: center;
+  cursor: pointer;
+}
+
+.links li.active a {
+  font-weight: bold;
+  color: #1b314bc2; /* 활성 상태 색상 */
+}
+
+form {
+  width: 100%;
+  max-width: 680px;
+  margin: 40px auto 10px;
+}
+
+.input__block {
+  text-align: center;
+  margin: 20px auto;
+  display: block;
+  position: relative;
+}
+
+.input__block input {
+  display: block;
+  width: 50%;
+  max-width: 680px;
+  height: 60px;
+  margin: 0 auto;
+  border-radius: 18px;
+  border: 2px solid #a3adb3;
+  background: rgb(255, 255, 255);
+  color: rgba(15, 19, 42, 0.3);
+  padding: 0 0 0 15px;
+  font-size: 14px;
+  font-family: 'Montserrat', sans-serif;
+}
+
+.input__block input:focus,
+.input__block input:active {
+  outline: none;
+  border: 2px solid #45a8d6;
+  color: rgba(15, 19, 42, 1);
+}
+
+.auth__btn {
+  background: #57b6e2;
+  color: white;
+  display: block;
+  width: 52.5%;
+  max-width: 680px;
+  height: 60px;
+  border-radius: 18px;
+  margin: 20px auto;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  font-family: 'Montserrat', sans-serif;
+  transition: 0.2s linear;
+}
+
+.auth__btn:hover {
+  background: #45a8d6b7;
+}
+
+.signin__btn {
+  background: #57b6e2;
+  color: white;
+  display: block;
+  width: 52.5%;
+  max-width: 680px;
+  height: 60px;
+  border-radius: 18px;
+  margin: 20px auto;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  font-family: 'Montserrat', sans-serif;
+  transition: 0.2s linear;
+}
+
+.signin__btn:hover {
+  background: #45a8d6b7;
+}
+
+/* 라디오 버튼 스타일 */
+.input__block label {
+  display: inline-block;
+  margin: 5px 15px;
+  font-size: 14px;
+  color: #1c3475;
+  font-weight: bold;
+}
+
+.input__block input[type="radio"] {
+  margin-right: 10px;
+}
+
+input[type="radio"] {
+  margin: 10px 10px;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border: 2px solid #1c3475; /* 외곽선 색상 */
+  border-radius: 50%;
+  background-color: white;
+  position: relative; /* ::after를 기준으로 위치를 잡기 위해 설정 */
+}
+
+input[type="radio"]:checked {
+  background-color: #ffffff; /* 선택된 배경색 */
+}
+
+input[type="radio"]:checked::after {
+  content: ''; /* 가상 요소 생성 */
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%); /* 부모 요소 중심으로 이동 */
+  width: 10px; /* 내부 원의 크기 */
+  height: 10px; /* 내부 원의 크기 */
+  border-radius: 50%; /* 내부 원도 둥글게 설정 */
+  background-color: #1c3475; /* 내부 원의 색상 */
+}
+
