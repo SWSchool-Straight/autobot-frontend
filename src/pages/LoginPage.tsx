@@ -1,32 +1,20 @@
 import * as React from 'react';
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { useAuth } from "../contexts/AuthContext";
 import "../styles/LoginPage.css";
-import { login as apiLogin } from "../services/loginService";
-import { LoginRequest, LoginResponse } from "../api/loginApi";
+import { handleLoginSubmit } from "../services/loginService";
 
-const SignInPage: React.FC = () => {
+const LoginPage: React.FC = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const navigate = useNavigate();
+  const [error, setError] = useState('');
 
-  // 현재 로그인한 사용자의 정보에 접근
-  const { login: authLogin } = useAuth();    //user.email, user.name 등으로 접근 가능
-
-  const handleSigninSubmit = async (e: React.MouseEvent) => {
+  const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    try {
-        const loginData: LoginRequest = { email, password };
-        const response = await apiLogin(loginData);
-        
-        authLogin({ email: response.email, name: email.split('@')[0] });
-        navigate("/");
-    } catch (error: any) {
-        console.error('로그인 에러:', error);
-        alert(error.message);
+    const errMessage = await handleLoginSubmit(email, password);
+    if (errMessage) {
+        setError(errMessage);
     }
-  };
+};
 
   return (
     <div className="container">
@@ -40,7 +28,7 @@ const SignInPage: React.FC = () => {
         </li>
       </ul>
 
-      <form action="" method="post">
+      <form action="" method="post" onSubmit={onSubmit}>
         <div className="input__block">
           <input
             type="email"
@@ -59,7 +47,7 @@ const SignInPage: React.FC = () => {
             onChange={(e) => setPassword(e.target.value)}
           />
         </div>
-        <button className="signin__btn" onClick={handleSigninSubmit}>
+        <button className="signin__btn">
           로그인
         </button>
       </form>
@@ -67,4 +55,4 @@ const SignInPage: React.FC = () => {
   );
 };
 
-export default SignInPage; 
+export default LoginPage; 
