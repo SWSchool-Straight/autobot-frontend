@@ -5,8 +5,8 @@ import App from './App';
 import Layout from './layouts/Dashboard';
 import ChatbotPage from './pages/ChatbotPage';
 import HistoryPage from './pages/HistoryPage';
-import SignInPage from './pages/LoginPage';
-import SignUpPage from './pages/SignUpPage';
+import LoginPage from './pages/LoginPage';
+import RegisterPage from './pages/RegisterPage';
 import { AuthProvider } from './contexts/AuthContext';
 const router = createBrowserRouter([
   {
@@ -31,11 +31,11 @@ const router = createBrowserRouter([
   },
   {
     path: '/login',
-    element: <SignInPage />,
+    element: <LoginPage />,
   },
   {
     path: '/signup',
-    element: <SignUpPage />,
+    element: <RegisterPage />,
   },
 ]);
 
