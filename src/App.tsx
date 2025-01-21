@@ -2,7 +2,7 @@ import * as React from 'react';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import SmsRoundedIcon from '@mui/icons-material/SmsRounded';
 import DirectionsCarFilledIcon from '@mui/icons-material/DirectionsCarFilled';
-import { AppProvider } from '@toolpad/core/react-router-dom';
+import { AppProvider } from '@toolpad/core';
 import { Outlet, useNavigate } from 'react-router-dom';
 import type { Navigation } from '@toolpad/core';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
