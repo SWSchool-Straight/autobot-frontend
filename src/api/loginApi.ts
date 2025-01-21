@@ -1,6 +1,6 @@
 import { AxiosResponse } from "axios";
 import { authApiClient } from "../api/apiClient";
-import { ApiResponse } from './apiReponse';
+import { ApiResponse } from './apiResponse';
 
 // 로그인 요청 데이터 타입
 export interface LoginRequest {

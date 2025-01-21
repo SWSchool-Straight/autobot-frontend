@@ -1,20 +1,29 @@
 import * as React from 'react';
 import { useState } from "react";
 import "../styles/LoginPage.css";
-import { handleLoginSubmit } from "../services/loginService";
+import { handleLoginSubmit } from '../services/loginService';
+import { useAuth } from "../contexts/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 const LoginPage: React.FC = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState('');
+  const { login } = useAuth();
+  const navigate = useNavigate();
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const errMessage = await handleLoginSubmit(email, password);
+    const errMessage = await handleLoginSubmit(
+      email, 
+      password,
+      (email, name) => login({ email, name }),
+      (path) => navigate(path)
+    );
     if (errMessage) {
-        setError(errMessage);
+      setError(errMessage);
     }
-};
+  };
 
   return (
     <div className="container">
