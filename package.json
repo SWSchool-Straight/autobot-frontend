@@ -6,14 +6,14 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "lint": "eslint .",
-    "preview": "vite preview"
+    "lint": "eslint ."
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.0",
     "@mui/icons-material": "^5.15.11",
-    "@mui/material": "^5.15.11",
+    "@mui/lab": "^6.0.0-beta.24",
+    "@mui/material": "^6.4.1",
     "@toolpad/core": "^0.12.0",
     "axios": "^1.7.9",
     "react": "^18.3.1",
