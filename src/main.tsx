@@ -8,6 +8,7 @@ import HistoryPage from './pages/HistoryPage';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import { AuthProvider } from './contexts/AuthContext';
+
 const router = createBrowserRouter([
   {
     path: '/',
@@ -27,16 +28,17 @@ const router = createBrowserRouter([
           },
         ],
       },
+      {
+        path: '/login',
+        element: <LoginPage />,
+      },
+      {
+        path: '/signup',
+        element: <RegisterPage />,
+      },
     ],
   },
-  {
-    path: '/login',
-    element: <LoginPage />,
-  },
-  {
-    path: '/signup',
-    element: <RegisterPage />,
-  },
+
 ]);
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
