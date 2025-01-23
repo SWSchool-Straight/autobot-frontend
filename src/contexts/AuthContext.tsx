@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { createContext, useContext, useState, useEffect } from 'react';
-import { setAccessToken, clearAccessToken, getAccessToken, getCurrentEmail } from '../services/loginService';
+import { setAccessToken, clearAccessToken, getAccessToken, getCurrentEmail, handleLogout, clearCurrentEmail } from '../services/loginService';
 
 export interface User {
   email: string;
@@ -48,9 +48,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const logout = () => {
-    clearAccessToken(); // 액세스 토큰 제거
-    setUser(null);
-    setIsAuthenticated(false);
+    const email = user?.email; // 현재 사용자 이메일 가져오기
+    if (email) {
+        handleLogout(email, () => {
+            clearAccessToken(); // 액세스 토큰 제거
+            clearCurrentEmail();  // 이메일 제거
+            setUser(null);
+            setIsAuthenticated(false);
+        });
+    }
   };
 
   return (

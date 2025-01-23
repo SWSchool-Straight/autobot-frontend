@@ -20,5 +20,5 @@ export const loginApi = (data: LoginRequest): Promise<AxiosResponse<ApiResponse<
 
 // 로그아웃 API 호출 함수
 export const logoutApi = (email: string): Promise<AxiosResponse<ApiResponse>> => {
-    return authApiClient.post('/api/members/logout', email);
+    return authApiClient.post('/api/members/logout', { email });
 };

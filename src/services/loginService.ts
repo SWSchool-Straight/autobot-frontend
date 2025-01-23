@@ -1,5 +1,5 @@
 import axios from "axios";
-import { LoginRequest, loginApi } from "../api/loginApi";
+import { LoginRequest, loginApi, logoutApi } from "../api/loginApi";
 import { authApiClient } from "../api/apiClient";
 import { useAuth, User } from '../contexts/AuthContext'; // AuthContext에서 useAuth 가져오기
 import { Warning } from "@mui/icons-material";
@@ -123,5 +123,21 @@ const handleLoginError = (error: any) => {
     } else {
         // Axios가 아닌 다른 에러인 경우
         throw new Error("로그인 중 알 수 없는 오류가 발생했습니다.");
+    }
+};
+
+// 로그아웃 처리 함수
+export const handleLogout = async (email: string, logout: () => void): Promise<void> => {
+    try {
+        const response = await logoutApi(email); // 로그아웃 API 호출
+        if (response.status === 200) {
+            logout(); // 로그아웃 상태 업데이트
+            console.log(response.data.message); // 성공 메시지 출력
+        } else {
+            throw new Error("로그아웃 요청에 실패했습니다.");
+        }
+    } catch (error) {
+        console.error('로그아웃 처리 중 에러 발생:', error);
+        throw new Error("로그아웃 중 알 수 없는 오류가 발생했습니다.");
     }
 };
