@@ -18,7 +18,7 @@ export const loginApi = (data: LoginRequest): Promise<AxiosResponse<ApiResponse<
     return authApiClient.post('/api/members/login', data);
 };
 
-// 헤더에 액세스 토큰 세팅
-export const setAccessToken = (token: string) => {
-    authApiClient.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+// 로그아웃 API 호출 함수
+export const logoutApi = (email: string): Promise<AxiosResponse<ApiResponse>> => {
+    return authApiClient.post('/api/members/logout', email);
 };

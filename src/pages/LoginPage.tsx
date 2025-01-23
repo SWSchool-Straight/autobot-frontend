@@ -17,11 +17,12 @@ const LoginPage: React.FC = () => {
     const errMessage = await handleLoginSubmit(
       email, 
       password,
-      (email, name) => login({ email, name }),
-      (path) => navigate(path)
+      login,
+      (path) => navigate(path),
     );
     if (errMessage) {
       setError(errMessage);
+      console.error(errMessage);
     }
   };
 
@@ -37,7 +38,7 @@ const LoginPage: React.FC = () => {
         </li>
       </ul>
 
-      <form action="" method="post" onSubmit={onSubmit}>
+      <form onSubmit={onSubmit}>
         <div className="input__block">
           <input
             type="email"
@@ -60,6 +61,7 @@ const LoginPage: React.FC = () => {
           로그인
         </button>
       </form>
+      {error && <p className="error">{error}</p>}
     </div>
   );
 };

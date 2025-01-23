@@ -52,8 +52,8 @@ const AppContent = () => {
     },
     isAuthenticated,
     labels: {
-      signIn: '로그인',
-      signOut: '로그아웃'
+      login: '로그인',
+      logout: '로그아웃'
     }
   };
 
