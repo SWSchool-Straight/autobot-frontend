@@ -41,7 +41,7 @@ const AppContent = () => {
     signOut: () => {
       setSession(null);
       logout();
-      navigate('/');
+      navigate('/chatbot');
     },
     isAuthenticated,
     labels: {

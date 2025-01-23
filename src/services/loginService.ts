@@ -88,7 +88,7 @@ export const handleLoginSubmit = async(
         const loginData: LoginRequest = { email, password };
         await handleLogin(loginData, login); // login을 매개변수로 전달
 
-        onNavigate("/");  // 홈 화면으로 이동
+        onNavigate("/chatbot");  // 채팅 화면으로 이동
         return null;
 
     } catch (err: any) {
