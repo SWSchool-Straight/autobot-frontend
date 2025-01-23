@@ -2,21 +2,18 @@ import * as React from 'react';
 import Typography from '@mui/material/Typography';
 import { useEffect, useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
-import { authTestApi } from '../test/authTestApi';
+import { authTest } from '../services/authTestService';
 
 export default function HistoryPage() {
   const { user } = useAuth();
-  const [apiResponse, setApiResponse] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await authTestApi();
-        console.log('서버 응답 전체:', response);
-        setApiResponse(response.data.info);
-      } catch (error) {
-        console.error("API 요청 실패:", error.response);
-        alert(error.message);
+        await authTest(); // API 호출
+      } catch (err) {
+        setError(err.message); // 에러 메시지 설정
       }
     };
 
@@ -25,7 +22,7 @@ export default function HistoryPage() {
 
   return (
     <Typography>
-      {user ? `환영합니다, ${user.name}!` : "사용자 정보를 불러오는 중입니다..."}
+      {error ? error : user ? `환영합니다, ${user.name}!` : "사용자 정보를 불러오는 중입니다..."}
     </Typography>
   );
 }
