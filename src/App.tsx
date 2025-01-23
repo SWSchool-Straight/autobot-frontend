@@ -1,20 +1,15 @@
 import * as React from 'react';
-import DashboardIcon from '@mui/icons-material/Dashboard';
 import SmsRoundedIcon from '@mui/icons-material/SmsRounded';
 import DirectionsCarFilledIcon from '@mui/icons-material/DirectionsCarFilled';
-import { AppProvider } from '@toolpad/core/react-router-dom';
+import { AppProvider } from '@toolpad/core';
 import { Outlet, useNavigate } from 'react-router-dom';
-import type { Navigation } from '@toolpad/core';
+import type { Navigation, Session } from '@toolpad/core';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 
 const NAVIGATION: Navigation = [
   {
     kind: 'header',
     title: 'Main items',
-  },
-  {
-    title: 'Dashboard',
-    icon: <DashboardIcon />,
   },
   {
     segment: 'chatbot',
@@ -36,26 +31,35 @@ const BRANDING = {
 const AppContent = () => {
   const navigate = useNavigate();
   const { isAuthenticated, logout, user } = useAuth();
-
-  const session = {
-    user: {
-      email: user?.email,
-      name: user?.name,
-    },
-  };
+  
+  const [session, setSession] = React.useState<Session | null>();
 
   const AUTHENTICATION = {
-    signIn: () => navigate('/login'),
-    signOut: () => {
-      logout();
+    signIn: () => {
       navigate('/login');
+    },
+    signOut: () => {
+      setSession(null);
+      logout();
+      navigate('/chatbot');
     },
     isAuthenticated,
     labels: {
-      signIn: '로그인',
-      signOut: '로그아웃'
-    }
+      login: '로그인',
+      logout: '로그아웃',
+    },
   };
+
+  React.useEffect(() => {
+    if (user) {
+      setSession({
+        user: {
+          email: user.email,
+          name: user.name,
+        },
+      });
+    }
+  }, [user]);
 
   return (
     <AppProvider

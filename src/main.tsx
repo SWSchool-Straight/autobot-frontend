@@ -5,9 +5,10 @@ import App from './App';
 import Layout from './layouts/Dashboard';
 import ChatbotPage from './pages/ChatbotPage';
 import HistoryPage from './pages/HistoryPage';
-import SignInPage from './pages/LoginPage';
-import SignUpPage from './pages/SignUpPage';
+import LoginPage from './pages/LoginPage';
+import RegisterPage from './pages/RegisterPage';
 import { AuthProvider } from './contexts/AuthContext';
+
 const router = createBrowserRouter([
   {
     path: '/',
@@ -27,16 +28,17 @@ const router = createBrowserRouter([
           },
         ],
       },
+      {
+        path: '/login',
+        element: <LoginPage />,
+      },
+      {
+        path: '/signup',
+        element: <RegisterPage />,
+      },
     ],
   },
-  {
-    path: '/login',
-    element: <SignInPage />,
-  },
-  {
-    path: '/signup',
-    element: <SignUpPage />,
-  },
+
 ]);
 
 ReactDOM.createRoot(document.getElementById('root')!).render(

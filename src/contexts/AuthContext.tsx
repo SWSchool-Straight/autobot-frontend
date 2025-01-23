@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { createContext, useContext, useState, useEffect } from 'react';
-import { authApiClient } from '../api/apiClient';
+import { setAccessToken, clearAccessToken, getAccessToken, getCurrentEmail, handleLogout, clearCurrentEmail } from '../services/loginService';
 
-interface User {
+export interface User {
   email: string;
   name: string;
 }
@@ -10,42 +10,53 @@ interface User {
 interface AuthContextType {
   isAuthenticated: boolean;
   user: User | null;
-  login: (userData: User) => void;
+  login: (userData: User, token: string) => void;
   logout: () => void;
 }
 
-const AuthContext = createContext<AuthContextType | null>(null);
+const AuthContext = createContext<AuthContextType>({
+  isAuthenticated: false,
+  user: null,
+  login: () => {},
+  logout: () => {},
+});
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [user, setUser] = useState<User | null>(null);
 
-  // 페이지 로드 시 토큰 확인
   useEffect(() => {
-    const token = document.cookie
-      .split('; ')
-      .find(row => row.startsWith('accessToken='))
-      ?.split('=')[1];
-
+    const token = getAccessToken();
     if (token) {
-      // 토큰이 있으면 API 클라이언트에 설정
-      authApiClient.defaults.headers.common['Authorization'] = `Bearer ${token}`;
       setIsAuthenticated(true);
-      // TODO: 토큰으로 사용자 정보 조회
+      const currentEmail = getCurrentEmail();
+      if (currentEmail) {
+        setUser({
+          email: currentEmail,
+          name: currentEmail.split('@')[0]
+        });
+      } else {
+        console.error("사용자 정보를 가져오는 데 실패했습니다.");
+      }
     }
   }, []);
 
-  const login = (userData: User) => {
+  const login = (userData: User, token: string) => {
     setUser(userData);
     setIsAuthenticated(true);
+    setAccessToken(token); // 액세스 토큰 설정
   };
 
   const logout = () => {
-    // 쿠키에서 토큰 제거
-    document.cookie = 'accessToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
-    delete authApiClient.defaults.headers.common['Authorization'];
-    setUser(null);
-    setIsAuthenticated(false);
+    const email = user?.email; // 현재 사용자 이메일 가져오기
+    if (email) {
+        handleLogout(email, () => {
+            clearAccessToken(); // 액세스 토큰 제거
+            clearCurrentEmail();  // 이메일 제거
+            setUser(null);
+            setIsAuthenticated(false);
+        });
+    }
   };
 
   return (
@@ -61,4 +72,4 @@ export function useAuth() {
     throw new Error('useAuth must be used within an AuthProvider');
   }
   return context;
-} 
+}
