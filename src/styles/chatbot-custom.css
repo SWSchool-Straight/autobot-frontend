@@ -47,6 +47,7 @@
   border-radius: 12px;
   background-color: #f0f0f0;
   white-space: pre-wrap;
+  position: relative;
 }
 
 .bot-message .message-content {
@@ -54,8 +55,28 @@
   color: white;
 }
 
+.bot-message .message-content::before {
+  content: '';
+  position: absolute;
+  left: -8px;
+  top: 14px;
+  border-style: solid;
+  border-width: 8px 10px 8px 0;
+  border-color: transparent #386596 transparent transparent;
+}
+
 .user-message .message-content {
   background-color: #e3e3e3;
+}
+
+.user-message .message-content::before {
+  content: '';
+  position: absolute;
+  right: -8px;
+  top: 14px;
+  border-style: solid;
+  border-width: 8px 0 8px 10px;
+  border-color: transparent transparent transparent #e3e3e3;
 }
 
 .bot-avatar {
