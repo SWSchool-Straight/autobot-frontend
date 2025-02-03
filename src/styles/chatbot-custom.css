@@ -134,3 +134,66 @@
   0%, 80%, 100% { opacity: 0; }
   40% { opacity: 1; }
 }
+
+.car-cards {
+  display: flex;
+  gap: 1rem;
+  overflow-x: auto;
+  padding: 1rem 0;
+}
+
+.car-card {
+  min-width: 300px;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  overflow: hidden;
+  background: white;
+  text-decoration: none;
+  color: inherit;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.car-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.car-card img {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+}
+
+.car-info {
+  padding: 1.2rem;
+}
+
+.car-info h3 {
+  margin: 0 0 1rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #002c5f;  /* 현대 브랜드 컬러 */
+  line-height: 1.4;
+}
+
+.car-info p {
+  margin: 0.5rem 0;
+  font-size: 0.95rem;
+  color: #666;
+  display: flex;
+  justify-content: space-between;
+}
+
+.car-info .price {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid #eee;
+  font-size: 1.1rem;
+  color: #002c5f;
+  font-weight: 600;
+}
+
+.car-info .label {
+  color: #888;
+  font-weight: normal;
+}

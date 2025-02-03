@@ -12,6 +12,41 @@ const ChatbotPage = () => {
       content: '안녕하세요. 무엇을 도와드릴까요?',
       sender: 'bot',
       timestamp: new Date()
+    },
+    // 예시
+    {
+      id: '1',
+      content: '2023 그랜저 추천해주세요',
+      sender: 'user',
+      timestamp: new Date()
+    },
+    {
+      id: '2',
+      content: '총 2대의 2023 그랜저가 검색되었습니다. 검색된 결과에 대해 알려드리겠습니다.',
+      sender: 'bot',
+      timestamp: new Date(),
+      goods: [
+        {
+          goodsNo: 'HGN240826008529',
+          detailUrl: 'https://certified.hyundai.com/p/goods/goodsDetail.do?goodsNo=HGN240826008529',
+          imageUrl: 'https://certified-static.hyundai.com/contents/goods/shootConts/tobepic/02/exterior/HGN240826008529/PRD602_233.JPG/dims/crop/2304x1536+600+770/resize/380x253/optimize',
+          vehicleName: '2023 그랜저(GN7) 하이브리드 2WD 익스클루시브',
+          dateFirstRegistered: '2023-08-24',
+          vehicleMile: '28063',
+          vehicleId: '215모1676',
+          totalPurchaseAmount: '42100000'
+        },
+        {
+          goodsNo: 'HGN241014009561',
+          detailUrl: 'https://certified.hyundai.com/p/goods/goodsDetail.do?goodsNo=HGN241014009561',
+          imageUrl: 'https://certified-static.hyundai.com/contents/goods/shootConts/tobepic/02/exterior/HGN241014009561/PRD602_233.JPG/dims/crop/2304x1536+600+770/resize/380x253/optimize',
+          vehicleName: '2023 그랜저(GN7) 하이브리드 2WD 익스클루시브',
+          dateFirstRegistered: '2023-02-16',
+          vehicleMile: '20266',
+          vehicleId: '376로1843',
+          totalPurchaseAmount: '41900000'
+        }
+      ]
     }
   ]);
   const [inputMessage, setInputMessage] = useState('');
@@ -76,6 +111,35 @@ const ChatbotPage = () => {
             )}
             <div className="message-content">
               {message.content}
+              {message.goods && message.goods.length > 0 && (
+                <div className="car-cards">
+                  {message.goods.map((car) => (
+                    <a href={car.detailUrl} target="_blank" rel="noopener noreferrer" 
+                       key={car.goodsNo} className="car-card">
+                      <img src={car.imageUrl} alt={car.vehicleName} />
+                      <div className="car-info">
+                        <h3>{car.vehicleName}</h3>
+                        <p>
+                          <span className="label">주행거리</span>
+                          <span>{Number(car.vehicleMile).toLocaleString()} km</span>
+                        </p>
+                        <p>
+                          <span className="label">차량번호</span>
+                          <span>{car.vehicleId}</span>
+                        </p>
+                        <p>
+                          <span className="label">최초등록일</span>
+                          <span>{car.dateFirstRegistered}</span>
+                        </p>
+                        <p className="price">
+                          <span className="label">가격</span>
+                          <span>{Number(car.totalPurchaseAmount).toLocaleString()}원</span>
+                        </p>
+                      </div>
+                    </a>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
         ))}
