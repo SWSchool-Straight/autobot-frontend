@@ -56,7 +56,7 @@ h1 {
 .input-block {
   text-align: center;
   margin: 0 auto;
-  width: 70%;
+  width: 400px;
 }
 
 .input-block input {
@@ -91,7 +91,7 @@ h1 {
 }
 
 .auth-button {
-  width: 70%;
+  width: 400px;
   height: 60px;
   margin: 8px auto;
   padding: 0;
@@ -130,12 +130,12 @@ h1 {
 
 @media (max-width: 1024px) {
   .input-block, .auth-button {
-    width: 80%;
+    width: 360px;
   }
 }
 
 @media (max-width: 768px) {
   .input-block, .auth-button {
-    width: 90%;
+    width: 320px;
   }
 } 

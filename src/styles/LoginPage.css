@@ -1,121 +1,114 @@
+@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+
 body {
-  font-family: 'Montserrat', sans-serif;
-  background: white;
+  font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, 'Helvetica Neue', 'Segoe UI', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', sans-serif;
 }
 
 .container {
-  display: block;
-  max-width: 680px;
+  display: flex;
+  flex-direction: column;
   width: 80%;
-  margin: 120px auto;
+  max-width: 1200px;
+  margin: 20px auto;
+  padding: 24px;
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
 }
 
 h1 {
-  color: #1c3475;
-  font-size: 48px;
-  letter-spacing: -3px;
+  margin: 0 0 24px 0;
+  color: #002c5f;
+  font-size: 1.8rem;
+  font-weight: 700;
+  letter-spacing: -0.5px;
   text-align: center;
-  margin: 120px 0 80px 0;
-  transition: 0.2s linear;
 }
 
 .links {
-  margin: 0 130px; 
+  display: flex;
+  justify-content: center;
+  gap: 48px;
+  margin: 0 0 24px 0;
+  padding: 0;
   list-style-type: none;
 }
 
-.links li {
-  display: inline-block;
-  margin: 0 20px 0 0;
-  transition: 0.2s linear;
-}
-
-.links a {
+.links li a {
   text-decoration: none;
-  color: #9fa3b6be;
-  font-weight: bolder;
-  text-align: center;
-  cursor: pointer;
+  color: #666;
+  font-weight: 500;
+  font-size: 0.9rem;
 }
 
 .links li.active a {
-  font-weight: bold;
-  color: #1b314bc2; /* 활성 상태 색상 */
+  color: #002c5f;
+  font-weight: 700;
 }
 
 form {
-  width: 100%;
-  max-width: 680px;
-  margin: 40px auto 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
 }
 
 .input__block {
   text-align: center;
-  margin: 20px auto;
-  display: block;
-  position: relative;
+  margin: 0 auto;
+  width: 400px;
 }
 
 .input__block input {
-  display: block;
-  width: 50%;
-  max-width: 680px;
+  width: 100%;
   height: 60px;
-  margin: 0 auto;
-  border-radius: 18px;
-  border: 2px solid #a3adb3;
-  background: rgb(255, 255, 255);
-  color: rgba(15, 19, 42, 0.3);
-  padding: 0 0 0 15px;
-  font-size: 14px;
-  font-family: 'Montserrat', sans-serif;
+  padding: 0 16px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 16px;
+  box-sizing: border-box;
 }
 
-.input__block input:focus,
-.input__block input:active {
+.input__block input:focus {
+  border-color: #002c5f;
   outline: none;
-  border: 2px solid #45a8d6;
-  color: rgba(15, 19, 42, 1);
-}
-
-.auth__btn {
-  background: #57b6e2;
-  color: white;
-  display: block;
-  width: 52.5%;
-  max-width: 680px;
-  height: 60px;
-  border-radius: 18px;
-  margin: 20px auto;
-  border: none;
-  cursor: pointer;
-  font-size: 14px;
-  font-family: 'Montserrat', sans-serif;
-  transition: 0.2s linear;
-}
-
-.auth__btn:hover {
-  background: #45a8d6b7;
 }
 
 .signin__btn {
-  background: #57b6e2;
-  color: white;
-  display: block;
-  width: 52.5%;
-  max-width: 680px;
+  width: 400px;
   height: 60px;
-  border-radius: 18px;
-  margin: 20px auto;
+  margin: 8px auto;
+  padding: 0;
+  background-color: #002c5f;
+  color: white;
   border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 500;
   cursor: pointer;
-  font-size: 14px;
-  font-family: 'Montserrat', sans-serif;
-  transition: 0.2s linear;
+  transition: background-color 0.2s;
 }
 
 .signin__btn:hover {
-  background: #45a8d6b7;
+  background-color: #003875;
+}
+
+.error {
+  color: #e74c3c;
+  text-align: center;
+  margin-top: 16px;
+  font-size: 0.9rem;
+}
+
+@media (max-width: 1024px) {
+  .input__block, .signin__btn {
+    width: 360px;
+  }
+}
+
+@media (max-width: 768px) {
+  .input__block, .signin__btn {
+    width: 320px;
+  }
 }
 
 /* 라디오 버튼 스타일 */
@@ -156,5 +149,24 @@ input[type="radio"]:checked::after {
   height: 10px; /* 내부 원의 크기 */
   border-radius: 50%; /* 내부 원도 둥글게 설정 */
   background-color: #1c3475; /* 내부 원의 색상 */
+}
+
+.auth-links {
+    display: flex;
+    justify-content: center;
+    gap: 24px;
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid #eee;
+}
+
+.auth-links a {
+    color: #666;
+    text-decoration: none;
+    font-size: 0.9rem;
+}
+
+.auth-links a:hover {
+    color: #002c5f;
 }
 
