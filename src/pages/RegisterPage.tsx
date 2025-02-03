@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { register } from "../services/registerService";
 import { formatBirthDate } from "../utils/validators";
 import { RegisterRequest } from "../api/registerApi";
-import "../styles/LoginPage.css";
+import "../styles/RegisterPage.css";
 
 const RegisterPage: React.FC = () => {
     const [formData, setFormData] = useState({
@@ -15,6 +15,10 @@ const RegisterPage: React.FC = () => {
         gender: ""
     });
     const navigate = useNavigate();
+
+    const handleBack = () => {
+        navigate(-1);
+    };
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
@@ -51,60 +55,53 @@ const RegisterPage: React.FC = () => {
     };
 
     return (
-        <div className="container">
-            <h1>회원가입</h1>
-            <ul className="links">
-                <li>
-                    <a href="/login">로그인</a>
-                </li>
-                <li className="active">
-                    <a href="#" id="signup">회원가입</a>
-                </li>
-            </ul>
+        <div className="auth-container">
+            <div className="auth-header">
+                <button onClick={handleBack} className="back-button">
+                    ← 뒤로가기
+                </button>
+                <h1>회원가입</h1>
+            </div>
 
-            <form action="" method="post">
-                <div className="input__block">
+            <form className="auth-form" onSubmit={(e) => e.preventDefault()}>
+                <div className="input-block">
                     <input
                         type="email"
-                        placeholder="Email"
-                        className="input"
+                        placeholder="이메일"
                         name="email"
                         value={formData.email}
                         onChange={handleInputChange}
                     />
                 </div>
-                <div className="input__block">
+                <div className="input-block">
                     <input
                         type="password"
                         placeholder="비밀번호"
-                        className="input"
                         name="password"
                         value={formData.password}
                         onChange={handleInputChange}
                     />
                 </div>
-                <div className="input__block">
+                <div className="input-block">
                     <input
                         type="text"
                         placeholder="이름"
-                        className="input"
                         name="name"
                         value={formData.name}
                         onChange={handleInputChange}
                     />
                 </div>
-                <div className="input__block">
+                <div className="input-block">
                     <input
                         type="text"
-                        placeholder="생년월일 (주민번호 앞자리)"
-                        className="input"
+                        placeholder="생년월일 (YYMMDD)"
                         name="birthDate"
                         value={formData.birthDate}
                         onChange={handleInputChange}
                     />
                 </div>
-                <div className="input__block">
-                    <label>
+                <div className="radio-group">
+                    <label className="radio-label">
                         <input
                             type="radio"
                             name="gender"
@@ -114,7 +111,7 @@ const RegisterPage: React.FC = () => {
                         />
                         남성
                     </label>
-                    <label>
+                    <label className="radio-label">
                         <input
                             type="radio"
                             name="gender"
@@ -125,10 +122,14 @@ const RegisterPage: React.FC = () => {
                         여성
                     </label>
                 </div>
-                <button className="signin__btn" onClick={handleRegisterSubmit}>
-                    회원가입 하기
+                <button className="auth-button" onClick={handleRegisterSubmit}>
+                    회원가입
                 </button>
             </form>
+
+            <div className="auth-links">
+                <a href="/login">이미 계정이 있으신가요? 로그인하기</a>
+            </div>
         </div>
     );
 };

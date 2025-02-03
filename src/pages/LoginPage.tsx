@@ -12,6 +12,10 @@ const LoginPage: React.FC = () => {
   const { login } = useAuth();
   const navigate = useNavigate();
 
+  const handleBack = () => {
+    navigate(-1);
+  };
+
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const errMessage = await handleLoginSubmit(
@@ -28,15 +32,12 @@ const LoginPage: React.FC = () => {
 
   return (
     <div className="container">
-      <h1>로그인</h1>
-      <ul className="links">
-        <li className="active">
-          <a href="#" id="signin">로그인</a>
-        </li>
-        <li>
-          <a href="/signup">회원가입</a>
-        </li>
-      </ul>
+      <div className="auth-header">
+        <button onClick={handleBack} className="back-button">
+          ← 뒤로가기
+        </button>
+        <h1>로그인</h1>
+      </div>
 
       <form onSubmit={onSubmit}>
         <div className="input__block">
@@ -62,6 +63,10 @@ const LoginPage: React.FC = () => {
         </button>
       </form>
       {error && <p className="error">{error}</p>}
+      
+      <div className="auth-links">
+        <a href="/signup">아직 계정이 없으신가요? 회원가입 하러 가기</a>
+      </div>
     </div>
   );
 };
