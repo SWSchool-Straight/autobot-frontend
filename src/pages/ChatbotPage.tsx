@@ -4,6 +4,7 @@ import { chatService } from '../services/chatService';
 import { ChatMessage } from '../types/chat';
 import '../styles/chatbot-custom.css';
 import BotIcon from '../assets/bot_icon.svg';
+import LoadingSpinner from '../components/LoadingSpinner';
 
 const ChatbotPage = () => {
   const [messages, setMessages] = useState<ChatMessage[]>([
@@ -52,6 +53,7 @@ const ChatbotPage = () => {
   const [inputMessage, setInputMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const [isPageLoading, setIsPageLoading] = useState(false);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -98,8 +100,15 @@ const ChatbotPage = () => {
     }
   };
 
+  const handleCardClick = (e: React.MouseEvent<HTMLAnchorElement>, url: string) => {
+    e.preventDefault();
+    setIsPageLoading(true);
+    window.location.href = url;
+  };
+
   return (
     <div className="chatbot-container">
+      {isPageLoading && <LoadingSpinner />}
       <div className="chatbot-messages">
         {messages.map((message) => (
           <div 
@@ -114,8 +123,14 @@ const ChatbotPage = () => {
               {message.goods && message.goods.length > 0 && (
                 <div className="car-cards">
                   {message.goods.map((car) => (
-                    <a href={car.detailUrl} target="_blank" rel="noopener noreferrer" 
-                       key={car.goodsNo} className="car-card">
+                    <a 
+                      href={car.detailUrl} 
+                      onClick={(e) => handleCardClick(e, car.detailUrl)}
+                      target="_blank" 
+                      rel="noopener noreferrer" 
+                      key={car.goodsNo} 
+                      className="car-card"
+                    >
                       <img src={car.imageUrl} alt={car.vehicleName} />
                       <div className="car-info">
                         <h3>{car.vehicleName}</h3>

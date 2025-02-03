@@ -197,3 +197,39 @@
   color: #888;
   font-weight: normal;
 }
+
+.loading-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.9);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.loading-icon {
+  width: 60px;
+  height: 60px;
+  animation: bounce 1s infinite;
+}
+
+.loading-text {
+  margin-top: 1rem;
+  color: #002c5f;
+  font-size: 1.1rem;
+  font-weight: 500;
+}
+
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
