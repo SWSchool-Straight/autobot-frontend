@@ -6,6 +6,7 @@ import '../styles/chatbot-custom.css';
 import BotIcon from '../assets/bot_icon.svg';
 import LoadingSpinner from '../components/LoadingSpinner';
 import { useAuth } from '../contexts/AuthContext';
+import { useLocation } from 'react-router-dom';
 
 const ChatbotPage = () => {
   const { isAuthenticated } = useAuth();
@@ -15,6 +16,8 @@ const ChatbotPage = () => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [isPageLoading, setIsPageLoading] = useState(false);
   const [hasStartedChat, setHasStartedChat] = useState(false);
+  const location = useLocation();
+  const initialMessage = location.state?.initialMessage;
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -24,15 +27,21 @@ const ChatbotPage = () => {
     scrollToBottom();
   }, [messages]);
 
-  const handleSendMessage = async (e: React.FormEvent) => {
+  React.useEffect(() => {
+    if (initialMessage) {
+      handleSendMessage(new Event('submit') as any, initialMessage);
+    }
+  }, []);
+
+  const handleSendMessage = async (e: React.FormEvent, message: string) => {
     e.preventDefault();
-    if (!inputMessage.trim()) return;
+    if (!message.trim()) return;
 
     setHasStartedChat(true);
 
     const userMessage: ChatMessage = {
       id: Date.now().toString(),
-      content: inputMessage,
+      content: message,
       sender: 'user',
       timestamp: new Date()
     };
@@ -42,7 +51,7 @@ const ChatbotPage = () => {
     setIsLoading(true);
 
     try {
-      const response = await chatService.sendMessage(inputMessage);
+      const response = await chatService.sendMessage(message);
       
       // 검색 결과 메시지
       const searchMessage: ChatMessage = {
@@ -109,13 +118,13 @@ const ChatbotPage = () => {
       <div className="welcome-examples">
         <p>다음과 같은 것들을 물어보실 수 있습니다:</p>
         <div className="example-queries">
-          <button onClick={() => setInputMessage("2년 미만 중고차를 보여줘")}>
+          <button onClick={(e) => handleSendMessage(e, "2년 미만 중고차를 보여줘")}>
             2년 미만 중고차를 보여줘
           </button>
-          <button onClick={() => setInputMessage("2023 그랜저 추천해줘")}>
+          <button onClick={(e) => handleSendMessage(e, "2023 그랜저 추천해줘")}>
             2023 그랜저 추천해줘
           </button>
-          <button onClick={() => setInputMessage("3000만원 이하 차량 찾아줘")}>
+          <button onClick={(e) => handleSendMessage(e, "3000만원 이하 차량 찾아줘")}>
             3000만원 이하 차량 찾아줘
           </button>
         </div>
@@ -217,7 +226,7 @@ const ChatbotPage = () => {
         <div ref={messagesEndRef} />
       </div>
       
-      <form onSubmit={handleSendMessage} className="chatbot-input-form">
+      <form onSubmit={(e) => handleSendMessage(e, inputMessage)} className="chatbot-input-form">
         <input
           type="text"
           value={inputMessage}
