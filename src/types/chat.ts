@@ -3,14 +3,24 @@ export interface ChatMessage {
   content: string;
   sender: 'bot' | 'user';
   timestamp: Date;
-  goods?: {
-    goodsNo: string;
-    detailUrl: string;
-    imageUrl: string;
-    vehicleName: string;
-    dateFirstRegistered: string;
-    vehicleMile: string;
-    vehicleId: string;
-    totalPurchaseAmount: string;
-  }[];
+  goods?: CarInfo[];
+}
+
+export interface CarInfo {
+  goodsNo: string;
+  detailUrl: string;
+  imageUrl: string;
+  vehicleName: string;
+  dateFirstRegistered: string;
+  vehicleMile: string;
+  vehicleId: string;
+  interiorColor: string;
+  newCarPrice: string;
+  totalPurchaseAmount: string;
+  savingsAmount: string;
+}
+
+export interface ChatResponse {
+  query: string;
+  goods: CarInfo[];
 }

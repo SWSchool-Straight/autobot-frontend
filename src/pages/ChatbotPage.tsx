@@ -35,7 +35,10 @@ const ChatbotPage = () => {
           dateFirstRegistered: '2023-08-24',
           vehicleMile: '28063',
           vehicleId: '215모1676',
-          totalPurchaseAmount: '42100000'
+          totalPurchaseAmount: '42100000',
+          interiorColor: '블랙/브라운 투톤',
+          newCarPrice: '52160000',
+          savingsAmount: '10060000'
         },
         {
           goodsNo: 'HGN241014009561',
@@ -45,7 +48,10 @@ const ChatbotPage = () => {
           dateFirstRegistered: '2023-02-16',
           vehicleMile: '20266',
           vehicleId: '376로1843',
-          totalPurchaseAmount: '41900000'
+          totalPurchaseAmount: '41900000',
+          interiorColor: '블랙모노톤',
+          newCarPrice: '50730000',
+          savingsAmount: '8830000'
         },
         {
           goodsNo: 'HGN240915009123',
@@ -55,7 +61,10 @@ const ChatbotPage = () => {
           dateFirstRegistered: '2023-05-19',
           vehicleMile: '15789',
           vehicleId: '142하8821',
-          totalPurchaseAmount: '43500000'
+          totalPurchaseAmount: '43500000',
+          interiorColor: '',
+          newCarPrice: '',
+          savingsAmount: ''
         },
         {
           goodsNo: 'HGN240728008123',
@@ -65,7 +74,10 @@ const ChatbotPage = () => {
           dateFirstRegistered: '2023-03-30',
           vehicleMile: '32150',
           vehicleId: '527무9912',
-          totalPurchaseAmount: '38700000'
+          totalPurchaseAmount: '38700000',
+          interiorColor: '',
+          newCarPrice: '',
+          savingsAmount: ''
         },
         {
           goodsNo: 'HGN240630007891',
@@ -75,7 +87,10 @@ const ChatbotPage = () => {
           dateFirstRegistered: '2023-06-15',
           vehicleMile: '18920',
           vehicleId: '834라2277',
-          totalPurchaseAmount: '45800000'
+          totalPurchaseAmount: '45800000',
+          interiorColor: '',
+          newCarPrice: '',
+          savingsAmount: ''
         }
       ]
     }
@@ -110,16 +125,31 @@ const ChatbotPage = () => {
 
     try {
       const response = await chatService.sendMessage(inputMessage);
-      const botMessage: ChatMessage = {
-        id: (Date.now() + 1).toString(),
-        content: response.message,
+      
+      // 검색 결과 메시지
+      const searchMessage: ChatMessage = {
+        id: Date.now().toString(),
+        content: response.query,
         sender: 'bot',
         timestamp: new Date()
       };
-      setMessages(prev => [...prev, botMessage]);
+      
+      // 차량 카드 메시지
+      const cardsMessage: ChatMessage = {
+        id: (Date.now() + 1).toString(),
+        content: '아래는 검색된 차량들입니다.',
+        sender: 'bot',
+        timestamp: new Date(),
+        goods: response.goods.map(car => ({
+          ...car,
+          savingsAmount: car.savingsAmount // 절감액 추가
+        }))
+      };
+      
+      setMessages(prev => [...prev, searchMessage, cardsMessage]);
     } catch (error) {
       const errorMessage: ChatMessage = {
-        id: (Date.now() + 1).toString(),
+        id: Date.now().toString(),
         content: '죄송합니다. 일시적인 오류가 발생했습니다.',
         sender: 'bot',
         timestamp: new Date()
@@ -165,6 +195,12 @@ const ChatbotPage = () => {
                       <img src={car.imageUrl} alt={car.vehicleName} />
                       <div className="car-info">
                         <h3>{car.vehicleName}</h3>
+                        {car.interiorColor && (
+                          <p>
+                            <span className="label">내부 색상</span>
+                            <span>{car.interiorColor}</span>
+                          </p>
+                        )}
                         <p>
                           <span className="label">주행거리</span>
                           <span>{Number(car.vehicleMile).toLocaleString()} km</span>
@@ -177,10 +213,24 @@ const ChatbotPage = () => {
                           <span className="label">최초등록일</span>
                           <span>{car.dateFirstRegistered}</span>
                         </p>
-                        <p className="price">
-                          <span className="label">가격</span>
-                          <span>{Number(car.totalPurchaseAmount).toLocaleString()}원</span>
-                        </p>
+                        <div className="price-info">
+                          {car.newCarPrice && (
+                            <>
+                              <p className="original-price">
+                                <span className="label">신차가격</span>
+                                <span>{Number(car.newCarPrice).toLocaleString()}원</span>
+                              </p>
+                              <p className="savings">
+                                <span className="label">할인된 금액</span>
+                                <span className="savings-amount">-{Number(car.savingsAmount).toLocaleString()}원</span>
+                              </p>
+                            </>
+                          )}
+                          <p className="final-price">
+                            <span className="label">판매가격</span>
+                            <span>{Number(car.totalPurchaseAmount).toLocaleString()}원</span>
+                          </p>
+                        </div>
                       </div>
                     </a>
                   ))}
