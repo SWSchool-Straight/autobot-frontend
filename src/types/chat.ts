@@ -4,6 +4,7 @@ export interface ChatMessage {
   sender: 'bot' | 'user';
   timestamp: Date;
   goods?: CarInfo[];
+  isSystemMessage?: boolean;
 }
 
 export interface CarInfo {

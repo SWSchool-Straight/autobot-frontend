@@ -2,9 +2,20 @@ import * as React from 'react';
 import SmsRoundedIcon from '@mui/icons-material/SmsRounded';
 import DirectionsCarFilledIcon from '@mui/icons-material/DirectionsCarFilled';
 import { AppProvider } from '@toolpad/core';
-import { Outlet, useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation, Outlet } from 'react-router-dom';
 import type { Navigation, Session } from '@toolpad/core';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
+import { DashboardLayout } from '@toolpad/core/DashboardLayout';
+import ChatbotPage from './pages/ChatbotPage';
+import HistoryPage from './pages/HistoryPage';
+import { createTheme } from '@mui/material/styles';
+
+const theme = createTheme({
+  cssVariables: {
+    colorSchemeSelector: 'data-toolpad-color-scheme',
+  },
+  colorSchemes: { light: true, dark: true },
+});
 
 const NAVIGATION: Navigation = [
   {
@@ -28,11 +39,30 @@ const BRANDING = {
   title: 'Chatbot',
 };
 
+function PageContent({ pathname }: { pathname: string }) {
+  switch (pathname) {
+    case '/chatbot':
+      return <ChatbotPage />;
+    case '/history':
+      return <HistoryPage />;
+    default:
+      return <ChatbotPage />;
+  }
+}
+
 const AppContent = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { isAuthenticated, logout, user } = useAuth();
-  
   const [session, setSession] = React.useState<Session | null>();
+
+  const router = {
+    pathname: location.pathname,
+    push: navigate,
+    replace: (path: string) => navigate(path, { replace: true }),
+    searchParams: new URLSearchParams(location.search),
+    navigate: (options: any) => navigate(options)
+  };
 
   const AUTHENTICATION = {
     signIn: () => {
@@ -67,6 +97,8 @@ const AppContent = () => {
       branding={BRANDING}
       session={session}
       authentication={AUTHENTICATION}
+      router={router}
+      theme={theme}
     >
       <Outlet />
     </AppProvider>
