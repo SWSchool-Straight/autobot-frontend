@@ -18,6 +18,7 @@ const ChatbotPage = () => {
   const [hasStartedChat, setHasStartedChat] = useState(false);
   const location = useLocation();
   const initialMessage = location.state?.initialMessage;
+  const [conversationId, setConversationId] = useState<number | null>(null);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -51,12 +52,17 @@ const ChatbotPage = () => {
     setIsLoading(true);
 
     try {
-      const response = await chatService.sendMessage(message);
+      const response = await chatService.sendMessage(conversationId || 1, message);
+      
+      // conversationId 저장
+      if (!conversationId) {
+        setConversationId(response.info.conversationId);
+      }
       
       // 검색 결과 메시지
       const searchMessage: ChatMessage = {
         id: Date.now().toString(),
-        content: response.query,
+        content: response.info.bedrockResponse.query,
         sender: 'bot',
         timestamp: new Date()
       };
@@ -67,7 +73,7 @@ const ChatbotPage = () => {
         content: '아래는 검색된 차량들입니다.',
         sender: 'bot',
         timestamp: new Date(),
-        goods: response.goods
+        goods: response.info.bedrockResponse.goods
       };
       
       // 비로그인 사용자의 경우 채팅 저장 안내 메시지 추가

@@ -22,6 +22,15 @@ export interface CarInfo {
 }
 
 export interface ChatResponse {
-  query: string;
-  goods: CarInfo[];
+  message: string;
+  status: number;
+  info: {
+    createdAt: string;
+    bedrockResponse: {
+      query: string;
+      goods: CarInfo[];
+    };
+    conversationId: number;
+    title: string;
+  };
 }
