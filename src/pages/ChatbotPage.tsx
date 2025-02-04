@@ -23,7 +23,7 @@ const ChatbotPage = () => {
     },
     {
       id: '2',
-      content: '총 2대의 2023 그랜저가 검색되었습니다. 검색된 결과에 대해 알려드리겠습니다.',
+      content: '총 5대의 2023 그랜저가 검색되었습니다. 검색된 결과에 대해 알려드리겠습니다.',
       sender: 'bot',
       timestamp: new Date(),
       goods: [
@@ -46,6 +46,36 @@ const ChatbotPage = () => {
           vehicleMile: '20266',
           vehicleId: '376로1843',
           totalPurchaseAmount: '41900000'
+        },
+        {
+          goodsNo: 'HGN240915009123',
+          detailUrl: 'https://certified.hyundai.com/p/goods/goodsDetail.do?goodsNo=HGN240915009123',
+          imageUrl: 'https://certified-static.hyundai.com/contents/goods/shootConts/tobepic/02/exterior/HGN240915009123/PRD602_233.JPG/dims/crop/2304x1536+600+770/resize/380x253/optimize',
+          vehicleName: '2023 그랜저(GN7) 가솔린 3.5 2WD 캘리그래피',
+          dateFirstRegistered: '2023-05-19',
+          vehicleMile: '15789',
+          vehicleId: '142하8821',
+          totalPurchaseAmount: '43500000'
+        },
+        {
+          goodsNo: 'HGN240728008123',
+          detailUrl: 'https://certified.hyundai.com/p/goods/goodsDetail.do?goodsNo=HGN240728008123',
+          imageUrl: 'https://certified-static.hyundai.com/contents/goods/shootConts/tobepic/02/exterior/HGN240728008123/PRD602_233.JPG/dims/crop/2304x1536+600+770/resize/380x253/optimize',
+          vehicleName: '2023 그랜저(GN7) 가솔린 2.5 2WD 프리미엄',
+          dateFirstRegistered: '2023-03-30',
+          vehicleMile: '32150',
+          vehicleId: '527무9912',
+          totalPurchaseAmount: '38700000'
+        },
+        {
+          goodsNo: 'HGN240630007891',
+          detailUrl: 'https://certified.hyundai.com/p/goods/goodsDetail.do?goodsNo=HGN240630007891',
+          imageUrl: 'https://certified-static.hyundai.com/contents/goods/shootConts/tobepic/02/exterior/HGN240630007891/PRD602_233.JPG/dims/crop/2304x1536+600+770/resize/380x253/optimize',
+          vehicleName: '2023 그랜저(GN7) 하이브리드 2WD 캘리그래피',
+          dateFirstRegistered: '2023-06-15',
+          vehicleMile: '18920',
+          vehicleId: '834라2277',
+          totalPurchaseAmount: '45800000'
         }
       ]
     }
@@ -111,16 +141,17 @@ const ChatbotPage = () => {
       {isPageLoading && <LoadingSpinner />}
       <div className="chatbot-messages">
         {messages.map((message) => (
-          <div 
-            key={message.id} 
-            className={`message ${message.sender === 'bot' ? 'bot-message' : 'user-message'}`}
-          >
-            {message.sender === 'bot' && (
-              <img src={BotIcon} alt="Bot" className="bot-avatar" />
-            )}
-            <div className="message-content">
-              {message.content}
-              {message.goods && message.goods.length > 0 && (
+          <React.Fragment key={message.id}>
+            <div className={`message ${message.sender === 'bot' ? 'bot-message' : 'user-message'}`}>
+              {message.sender === 'bot' && (
+                <img src={BotIcon} alt="Bot" className="bot-avatar" />
+              )}
+              <div className="message-content">
+                {message.content}
+              </div>
+            </div>
+            {message.goods && message.goods.length > 0 && (
+              <div className="cards-container">
                 <div className="car-cards">
                   {message.goods.map((car) => (
                     <a 
@@ -154,9 +185,9 @@ const ChatbotPage = () => {
                     </a>
                   ))}
                 </div>
-              )}
-            </div>
-          </div>
+              </div>
+            )}
+          </React.Fragment>
         ))}
         {isLoading && (
           <div className="message bot-message">

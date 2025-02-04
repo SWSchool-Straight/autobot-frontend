@@ -158,15 +158,38 @@
   40% { opacity: 1; }
 }
 
+.cards-container {
+  width: fit-content;
+  margin: 0.5rem 0 0.5rem 52px;
+  align-self: flex-start;
+}
+
 .car-cards {
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(3, 240px);
   gap: 1rem;
-  overflow-x: auto;
-  padding: 1rem 0;
+  padding: 0.8rem;
+  background-color: #f8f9fa;
+  border-radius: 12px;
+  width: fit-content;
+}
+
+.car-cards::-webkit-scrollbar {
+  display: none;
+}
+
+.car-cards::-webkit-scrollbar-track {
+  display: none;
+}
+
+.car-cards::-webkit-scrollbar-thumb {
+  display: none;
 }
 
 .car-card {
-  min-width: 300px;
+  width: 100%;
+  min-width: 240px;
+  max-width: 240px;
   border: 1px solid #ddd;
   border-radius: 12px;
   overflow: hidden;
@@ -174,6 +197,8 @@
   text-decoration: none;
   color: inherit;
   transition: transform 0.2s, box-shadow 0.2s;
+  display: flex;
+  flex-direction: column;
 }
 
 .car-card:hover {
@@ -183,35 +208,44 @@
 
 .car-card img {
   width: 100%;
-  height: 200px;
+  height: 160px;
   object-fit: cover;
 }
 
 .car-info {
-  padding: 1.2rem;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
 }
 
 .car-info h3 {
-  margin: 0 0 1rem;
-  font-size: 1.1rem;
+  margin: 0 0 0.8rem;
+  font-size: 0.95rem;
   font-weight: 600;
-  color: #002c5f;  /* 현대 브랜드 컬러 */
+  color: #002c5f;
   line-height: 1.4;
+  display: -webkit-box;
+  line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  height: auto;
+  min-height: 2.8em;
 }
 
 .car-info p {
-  margin: 0.5rem 0;
-  font-size: 0.95rem;
+  margin: 0.4rem 0;
+  font-size: 0.85rem;
   color: #666;
   display: flex;
   justify-content: space-between;
 }
 
 .car-info .price {
-  margin-top: 1rem;
-  padding-top: 1rem;
+  margin-top: 0.8rem;
+  padding-top: 0.8rem;
   border-top: 1px solid #eee;
-  font-size: 1.1rem;
+  font-size: 1rem;
   color: #002c5f;
   font-weight: 600;
 }
