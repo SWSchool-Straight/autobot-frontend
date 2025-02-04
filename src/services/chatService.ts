@@ -70,10 +70,10 @@ export const chatService = {
   ): Promise<ChatResponse> {
     try {
       const response = await chatApi.sendMessage(conversationId, content);
-      if (!response.data.info) {
+      if (!response.info) {
         throw new Error('응답 데이터가 없습니다.');
       }
-      return response.data.info;
+      return response.info;
     } catch (error) {
       console.error('메시지 전송 중 에러 발생:', error);
       throw error;

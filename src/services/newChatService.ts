@@ -24,9 +24,9 @@ export const newChatService = {
         try {
           const response = await chatApi.createConversation(content);
           
-          if (response.data.status === 201) {
-            const conversationId = response.data.info?.conversationId;
-            const title = response.data.info?.title;
+          if (response.status === 201) {
+            const conversationId = response.info?.conversationId;
+            const title = response.info?.title;
 
             if (conversationId) {
               this.setCurrentConversationId(conversationId);
