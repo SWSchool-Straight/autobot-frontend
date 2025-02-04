@@ -1,5 +1,6 @@
 import axios from "axios";
-import { LoginRequest, loginApi, logoutApi } from "../api/loginApi";
+import { LoginRequest } from "../types/login";
+import { loginApi, logoutApi } from "../api/loginApi";
 import { authApiClient } from "../api/apiClient";
 import { useAuth, User } from '../contexts/AuthContext'; // AuthContext에서 useAuth 가져오기
 import { Warning } from "@mui/icons-material";
