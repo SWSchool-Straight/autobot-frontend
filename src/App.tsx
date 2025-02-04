@@ -8,6 +8,8 @@ import HistoryIcon from '@mui/icons-material/History';
 import ChatbotPage from './pages/ChatbotPage';
 import HistoryPage from './pages/HistoryPage';
 import { createTheme } from '@mui/material/styles';
+import { useState } from 'react';
+import { ChatServiceContext } from './contexts/ChatServiceContext';
 
 const theme = createTheme({
   cssVariables: {
@@ -16,32 +18,16 @@ const theme = createTheme({
   colorSchemes: { light: true, dark: true },
 });
 
-const NAVIGATION: Navigation = [
-  {
-    kind: 'header',
-    title: 'Main items',
-  },
-  {
-    segment: 'chatbot',
-    title: 'New Chat',
-    icon: <SmsRoundedIcon />,
-  },
-  {
-    segment: 'history',
-    title: '대화 기록',
-    icon: <HistoryIcon />,
-    children: [
-      {
-        segment: 'topic1',
-        title: '2년 미만 중고차 보여줘',
-      },
-      {
-        segment: 'topic2',
-        title: '3000만원 이하 중고차 찾아줘',
-      },
-    ],
-  },
-];
+interface NavigationItem {
+  kind?: 'header';
+  segment?: string;
+  title: string;
+  icon?: React.ReactNode;
+  children?: Array<{
+    segment: string;
+    title: string;
+  }>;
+}
 
 const BRANDING = {
   logo: <img src="src/assets/logo.png" alt="hyundai logo" />,
@@ -64,6 +50,23 @@ const AppContent = () => {
   const location = useLocation();
   const { isAuthenticated, logout, user } = useAuth();
   const [session, setSession] = React.useState<Session | null>();
+  const [navigation, setNavigation] = useState<NavigationItem[]>([
+    {
+      kind: 'header',
+      title: 'Main items',
+    },
+    {
+      segment: 'chatbot',
+      title: 'New Chat',
+      icon: <SmsRoundedIcon />,
+    },
+    {
+      segment: 'history',
+      title: '대화 기록',
+      icon: <HistoryIcon />,
+      children: [],
+    },
+  ]);
 
   const router = {
     pathname: location.pathname,
@@ -89,6 +92,28 @@ const AppContent = () => {
     },
   };
 
+  const addNewConversation = (content: string, conversationId: number) => {
+    setNavigation(prev => {
+      const newNav = [...prev];
+      const historyIndex = newNav.findIndex(item => item.segment === 'history');
+      
+      if (historyIndex !== -1) {
+        const title = content.length > 10 ? `${content.slice(0, 10)}...` : content;
+        
+        if (!newNav[historyIndex].children) {
+          newNav[historyIndex].children = [];
+        }
+        
+        newNav[historyIndex].children?.unshift({
+          segment: `topic${conversationId}`,
+          title: title,
+        });
+      }
+      
+      return newNav;
+    });
+  };
+
   React.useEffect(() => {
     if (user) {
       setSession({
@@ -102,14 +127,16 @@ const AppContent = () => {
 
   return (
     <AppProvider
-      navigation={NAVIGATION}
+      navigation={navigation}
       branding={BRANDING}
       session={session}
       authentication={AUTHENTICATION}
       router={router}
       theme={theme}
     >
-      <Outlet />
+      <ChatServiceContext.Provider value={{ addNewConversation }}>
+        <Outlet />
+      </ChatServiceContext.Provider>
     </AppProvider>
   );
 };
