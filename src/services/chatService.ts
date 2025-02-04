@@ -1,26 +1,24 @@
-import axios from 'axios';
-
-const BASE_URL = import.meta.env.VITE_API_BASE_URL;
+import { ChatResponse } from '../types/chat';
 
 export const chatService = {
-  sendMessage: async (message: string) => {
+  async sendMessage(message: string): Promise<ChatResponse> {
     try {
-      const response = await axios.post(`${BASE_URL}/api/assist/chat_with_rag`, 
-        { query: message },
-        {
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          responseType: 'text'
-        }
-      );
-      
-      return { message: response.data };
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        console.error('에러 상세:', error.response?.data);
+      const response = await fetch('/api/chat', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ message }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
       }
+
+      return response.json();
+    } catch (error) {
+      console.error('Error:', error);
       throw error;
     }
-  }
+  },
 }; 
