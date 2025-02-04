@@ -1,11 +1,10 @@
 import * as React from 'react';
 import SmsRoundedIcon from '@mui/icons-material/SmsRounded';
-import DirectionsCarFilledIcon from '@mui/icons-material/DirectionsCarFilled';
 import { AppProvider } from '@toolpad/core';
 import { useNavigate, useLocation, Outlet } from 'react-router-dom';
 import type { Navigation, Session } from '@toolpad/core';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
-import { DashboardLayout } from '@toolpad/core/DashboardLayout';
+import HistoryIcon from '@mui/icons-material/History';
 import ChatbotPage from './pages/ChatbotPage';
 import HistoryPage from './pages/HistoryPage';
 import { createTheme } from '@mui/material/styles';
@@ -24,13 +23,23 @@ const NAVIGATION: Navigation = [
   },
   {
     segment: 'chatbot',
-    title: 'Chatbot',
+    title: 'New Chat',
     icon: <SmsRoundedIcon />,
   },
   {
     segment: 'history',
-    title: '최근 본 차량',
-    icon: <DirectionsCarFilledIcon />,
+    title: '대화 기록',
+    icon: <HistoryIcon />,
+    children: [
+      {
+        segment: 'topic1',
+        title: '2년 미만 중고차 보여줘',
+      },
+      {
+        segment: 'topic2',
+        title: '3000만원 이하 중고차 찾아줘',
+      },
+    ],
   },
 ];
 
