@@ -1,5 +1,4 @@
 import { chatApiClient } from './apiClient';
-import { AxiosResponse } from 'axios';
 import { ApiResponse } from './apiResponse';
 import { ChatResponse } from '../types/chat';
 

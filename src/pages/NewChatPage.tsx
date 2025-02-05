@@ -19,13 +19,15 @@ export default function NewChatPage() {
         addNewConversation(title, conversationId);
 
         // 대화 페이지로 이동
-        navigate(`/chat/${conversationId}`, { 
+        navigate(`/history/${conversationId}`, { 
             state: { 
               initialMessage: message,
               conversationId: conversationId
             }
-        });
-      });
+          });
+        },
+        (path) => navigate(path)
+      );
     } catch (error) {
       console.error('대화 시작 중 오류 발생:', error);
       // 에러 처리 로직 추가 가능

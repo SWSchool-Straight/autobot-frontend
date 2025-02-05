@@ -1,7 +1,7 @@
 import * as React from 'react';
 import SmsRoundedIcon from '@mui/icons-material/SmsRounded';
 import { AppProvider } from '@toolpad/core';
-import { useNavigate, useLocation, Outlet } from 'react-router-dom';
+import { useNavigate, useLocation, Outlet, Routes, Route } from 'react-router-dom';
 import type { Session } from '@toolpad/core';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import HistoryIcon from '@mui/icons-material/History';
@@ -10,6 +10,9 @@ import HistoryPage from './pages/HistoryPage';
 import { createTheme } from '@mui/material/styles';
 import { useState } from 'react';
 import { ChatServiceProvider } from './contexts/ChatServiceContext';
+import { newChatService } from './services/newChatService';
+import { DashboardLayout } from '@toolpad/core/DashboardLayout';
+import NewChatPage from './pages/NewChatPage';
 
 const theme = createTheme({
   cssVariables: {
@@ -33,17 +36,6 @@ const BRANDING = {
   logo: <img src="src/assets/logo.png" alt="hyundai logo" />,
   title: 'Chatbot',
 };
-
-function PageContent({ pathname }: { pathname: string }) {
-  switch (pathname) {
-    case '/chatbot':
-      return <ChatbotPage />;
-    case '/history':
-      return <HistoryPage />;
-    default:
-      return <ChatbotPage />;
-  }
-}
 
 const AppContent = () => {
   const navigate = useNavigate();
@@ -92,6 +84,45 @@ const AppContent = () => {
     },
   };
 
+  const updateNavigation = (conversationId: number, title: string) => {
+    setNavigation(prev => {
+      const newNav = [...prev];
+      const historyItem = newNav.find(item => item.segment === 'history');
+      
+      if (historyItem) {
+        if (!historyItem.children) {
+          historyItem.children = [];
+        }
+        
+        // 이미 존재하는 대화인지 확인
+        const existingChat = historyItem.children.find(
+          child => child.segment === `${conversationId}`
+        );
+        
+        if (!existingChat) {
+          historyItem.children.unshift({
+            segment: `${conversationId}`,
+            title: title
+          });
+        }
+      }
+      return newNav;
+    });
+  };
+
+  const chatServiceContextValue = {
+    createTab: async (content: string) => {
+      await newChatService.createTab(
+        content,
+        (conversationId, title) => updateNavigation(conversationId, title),
+        (path) => navigate(path)
+      );
+    },
+    addNewConversation: (title: string, id: number) => {
+      updateNavigation(id, title);
+    }
+  };
+
   React.useEffect(() => {
     if (user) {
       setSession({
@@ -112,8 +143,19 @@ const AppContent = () => {
       router={router}
       theme={theme}
     >
-      <ChatServiceProvider>
-        <Outlet />
+      <ChatServiceProvider value={chatServiceContextValue}>
+        <DashboardLayout>
+          <Routes>
+            <Route element={<Outlet />}>
+              <Route index element={<NewChatPage />} />
+              <Route path="chatbot" element={<NewChatPage />} />
+              <Route path="history">
+                <Route index element={<HistoryPage />} />
+                <Route path=":conversationId" element={<ChatbotPage />} />
+              </Route>
+            </Route>
+          </Routes>
+        </DashboardLayout>
       </ChatServiceProvider>
     </AppProvider>
   );

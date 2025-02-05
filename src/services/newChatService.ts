@@ -20,7 +20,8 @@ export const newChatService = {
     // 대화 기록 탭 생성
     async createTab(
         content: string,
-        onSuccess: (conversationId: number, title: string) => void
+        onSuccess: (conversationId: number, title: string) => void,
+        onNavigate: (path: string) => void
       ): Promise<void> {
         try {
           const response = await chatApi.createConversation(content);
@@ -32,6 +33,7 @@ export const newChatService = {
             if (conversationId) {
               this.setCurrentConversationId(conversationId);
               onSuccess(conversationId, title || '새 대화');
+              onNavigate(`/history/${conversationId}`);
             }
           }
 
