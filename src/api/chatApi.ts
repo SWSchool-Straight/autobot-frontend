@@ -18,5 +18,11 @@ export const chatApi = {
   async sendMessage(conversationId: number, content: string): Promise<ApiResponse<ChatResponse>>  {
     const response = await chatApiClient.post(`api/conversations/${conversationId}/messages`, { content });
     return response.data;
-  }
+  },
+
+  // 대화 목록 조회
+  async getConversations() {
+    const response = await chatApiClient.get('/api/conversations');
+    return response.data;
+  },
 }; 

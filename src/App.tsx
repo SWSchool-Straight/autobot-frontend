@@ -2,14 +2,14 @@ import * as React from 'react';
 import SmsRoundedIcon from '@mui/icons-material/SmsRounded';
 import { AppProvider } from '@toolpad/core';
 import { useNavigate, useLocation, Outlet } from 'react-router-dom';
-import type { Navigation, Session } from '@toolpad/core';
+import type { Session } from '@toolpad/core';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import HistoryIcon from '@mui/icons-material/History';
 import ChatbotPage from './pages/ChatbotPage';
 import HistoryPage from './pages/HistoryPage';
 import { createTheme } from '@mui/material/styles';
 import { useState } from 'react';
-import { ChatServiceContext } from './contexts/ChatServiceContext';
+import { ChatServiceProvider } from './contexts/ChatServiceContext';
 
 const theme = createTheme({
   cssVariables: {
@@ -92,28 +92,6 @@ const AppContent = () => {
     },
   };
 
-  const addNewConversation = (content: string, conversationId: number) => {
-    setNavigation(prev => {
-      const newNav = [...prev];
-      const historyIndex = newNav.findIndex(item => item.segment === 'history');
-      
-      if (historyIndex !== -1) {
-        const title = content.length > 10 ? `${content.slice(0, 10)}...` : content;
-        
-        if (!newNav[historyIndex].children) {
-          newNav[historyIndex].children = [];
-        }
-        
-        newNav[historyIndex].children?.unshift({
-          segment: `topic${conversationId}`,
-          title: title,
-        });
-      }
-      
-      return newNav;
-    });
-  };
-
   React.useEffect(() => {
     if (user) {
       setSession({
@@ -134,9 +112,9 @@ const AppContent = () => {
       router={router}
       theme={theme}
     >
-      <ChatServiceContext.Provider value={{ addNewConversation }}>
+      <ChatServiceProvider>
         <Outlet />
-      </ChatServiceContext.Provider>
+      </ChatServiceProvider>
     </AppProvider>
   );
 };

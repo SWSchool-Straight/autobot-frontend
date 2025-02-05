@@ -1,4 +1,5 @@
 import { chatApi } from '../api/chatApi';
+import { Conversation } from '../types/chat';
 
 // 현재 대화 ID를 저장할 변수
 let currentConversationId: number | null = null;
@@ -37,6 +38,24 @@ export const newChatService = {
         } catch (error) {
           console.error('대화 생성 중 에러 발생:', error);
           throw error;
+        }
+    },
+
+    // 대화 목록 조회
+    async getConversationList(): Promise<Array<Conversation>> {
+        try {
+            const response = await chatApi.getConversations();
+            
+            if (response.status === 200 && response.info) {
+                return response.info.sort((a: any, b: any) => 
+                    new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+                );
+            }
+            
+            return [];
+        } catch (error) {
+            console.error('대화 목록 조회 중 에러 발생:', error);
+            throw error;
         }
     },
 }

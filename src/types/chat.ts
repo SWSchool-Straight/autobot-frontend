@@ -30,3 +30,9 @@ export interface ChatResponse {
     conversationId: number;
     title: string;
 }
+
+export interface Conversation {
+    conversationId: number;
+    title: string;
+    createdAt: string;
+}
