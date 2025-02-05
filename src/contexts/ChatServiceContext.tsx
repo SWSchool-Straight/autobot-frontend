@@ -1,11 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { newChatService } from '../services/newChatService';
-
-interface Conversation {
-  id: number;
-  title: string;
-  createdAt: string;
-}
+import { Conversation } from '../types/chat';
 
 interface ChatServiceContextType {
   conversations: Conversation[];
@@ -22,7 +17,7 @@ export function ChatServiceProvider({ children }: { children: React.ReactNode })
     try {
       const conversationList = await newChatService.getConversationList();
       setConversations(conversationList.map(conv => ({
-        id: conv.conversationId,
+        conversationId: conv.conversationId,
         title: conv.title,
         createdAt: conv.createdAt
       })));
@@ -32,8 +27,8 @@ export function ChatServiceProvider({ children }: { children: React.ReactNode })
   };
 
   const addNewConversation = (title: string, id: number) => {
-    const newConversation = {
-      id,
+    const newConversation: Conversation = {
+      conversationId: id,
       title,
       createdAt: new Date().toISOString()
     };
