@@ -15,26 +15,27 @@ const router = createBrowserRouter([
     element: <App />,
     children: [
       {
-        path: '/',
-        element: <DashboardLayout>
-          <Outlet />
-        </DashboardLayout>,
+        index: true,
+        element: <NewChatPage />
+      },
+      {
+        path: 'chatbot',
+        element: <NewChatPage />,
+      },
+      {
+        path: 'history',
         children: [
           {
             index: true,
-            element: <NewChatPage />
+            element: <ChatbotPage />
           },
           {
-            path: 'chatbot',
-            element: <NewChatPage />,
-          },
-          {
-            path: 'history',
-            element: <ChatbotPage />,
+            path: ':conversationId',
+            element: <ChatbotPage />
           }
         ]
       }
-    ],
+    ]
   },
   {
     path: '/login',
