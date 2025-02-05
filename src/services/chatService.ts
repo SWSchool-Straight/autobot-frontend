@@ -1,13 +1,14 @@
 import { chatApi } from '../api/chatApi';
 import { ApiResponse } from '../api/apiResponse';
-import { ChatResponse, ChatMessage } from '../types/chat';
+import { ChatMessage, BotMessage, UserMessage, BotChatMessage } from '../types/chat';
 
 
 export const chatService = {
 
-  createBotMessages(response: ChatResponse, isAuthenticated: boolean): ChatMessage[] {
-    const messages: ChatMessage[] = [];
-
+  createBotMessages(response: BotMessage, isAuthenticated: boolean): BotChatMessage[] {
+    const messages: BotChatMessage[] = [];
+    const now = new Date().toISOString();
+    
     const bedrockResponse = response.bedrockResponse;
     if (!bedrockResponse) {
       console.error('bedrockResponse가 없습니다.');
@@ -16,29 +17,32 @@ export const chatService = {
     
     if (bedrockResponse.query) {
       messages.push({
-        id: Date.now().toString(),
+        messageId: Date.now(),
+        conversationId: response.conversationId,
         content: bedrockResponse.query,
-        sender: 'bot',
-        timestamp: new Date()
+        sender: 'BOT',
+        sentAt: now
       });
     }
 
     if (bedrockResponse.goods?.length > 0) {
       messages.push({
-        id: (Date.now() + 1).toString(),
+        messageId: Date.now() + 1,
+        conversationId: response.conversationId,
         content: '아래는 검색된 차량들입니다.',
-        sender: 'bot',
-        timestamp: new Date(),
+        sender: 'BOT',
+        sentAt: now,
         goods: bedrockResponse.goods
       });
     }
 
     if (!isAuthenticated) {
       messages.push({
-        id: (Date.now() + 2).toString(),
+        messageId: Date.now() + 2,
+        conversationId: response.conversationId,
         content: '💡 지금 로그인하시면 채팅 기록이 저장됩니다. 로그아웃하거나 새로고침하면 대화 기록이 사라집니다.',
-        sender: 'bot',
-        timestamp: new Date(),
+        sender: 'BOT',
+        sentAt: now,
         isSystemMessage: true
       });
     }
@@ -46,28 +50,30 @@ export const chatService = {
     return messages;
   },
 
-  createUserMessage(content: string): ChatMessage {
+  createUserMessage(content: string, conversationId: number): UserMessage {
     return {
-      id: Date.now().toString(),
+      messageId: Date.now(),
+      conversationId,
       content,
-      sender: 'user',
-      timestamp: new Date()
+      sender: 'USER',
+      sentAt: new Date().toISOString()
     };
   },
 
-  createErrorMessage(): ChatMessage {
+  createErrorMessage(conversationId: number): BotChatMessage {
     return {
-      id: Date.now().toString(),
+      messageId: Date.now(),
+      conversationId,
       content: '죄송합니다. 일시적인 오류가 발생했습니다.',
-      sender: 'bot',
-      timestamp: new Date()
+      sender: 'BOT',
+      sentAt: new Date().toISOString()
     };
   },
 
   async sendMessage(
     conversationId: number,
     content: string
-  ): Promise<ChatResponse> {
+  ): Promise<BotMessage> {
     try {
       const response = await chatApi.sendMessage(conversationId, content);
       if (!response.info) {

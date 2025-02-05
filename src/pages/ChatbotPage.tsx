@@ -32,8 +32,8 @@ const ChatbotPage = () => {
   useEffect(() => {
     const initialMessage = location.state?.initialMessage;
     if (initialMessage && conversationId) {
-      // 초기 메시지를 사용자 메시지로 추가
-      const userMessage = chatService.createUserMessage(initialMessage);
+      // 초기 메시지 생성
+      const userMessage = chatService.createUserMessage(initialMessage, Number(conversationId));
       setMessages([userMessage]);
       
       // 봇의 응답 요청
@@ -44,7 +44,7 @@ const ChatbotPage = () => {
           const botMessages = chatService.createBotMessages(chatResponse, isAuthenticated);
           setMessages(prev => [...prev, ...botMessages]);
         } catch (error) {
-          const errorMessage = chatService.createErrorMessage();
+          const errorMessage = chatService.createErrorMessage(Number(conversationId));
           setMessages(prev => [...prev, errorMessage]);
         } finally {
           setIsLoading(false);
@@ -58,7 +58,7 @@ const ChatbotPage = () => {
     e.preventDefault();
     if (!message.trim()) return;
 
-    const userMessage = chatService.createUserMessage(message);
+    const userMessage = chatService.createUserMessage(message, Number(conversationId));
     setMessages(prev => [...prev, userMessage]);
     setInputMessage('');
     setIsLoading(true);
@@ -68,7 +68,7 @@ const ChatbotPage = () => {
       const botMessages = chatService.createBotMessages(chatResponse, isAuthenticated);
       setMessages(prev => [...prev, ...botMessages]);
     } catch (error) {
-      const errorMessage = chatService.createErrorMessage();
+      const errorMessage = chatService.createErrorMessage(Number(conversationId));
       setMessages(prev => [...prev, errorMessage]);
     } finally {
       setIsLoading(false);
@@ -94,12 +94,18 @@ const ChatbotPage = () => {
       {isPageLoading && <LoadingSpinner />}
       <div className="chatbot-messages">
         {messages.map((message) => (
-          <React.Fragment key={message.id}>
-            <div className={`message ${message.sender === 'bot' ? 'bot-message' : 'user-message'}`}>
-              {message.sender === 'bot' && <img src={BotIcon} alt="Bot" className="bot-avatar" />}
-              <div className="message-content">{message.content}</div>
+          <React.Fragment key={message.messageId}>
+            <div className={`message ${message.sender === 'BOT' ? 'bot-message' : 'user-message'}`}>
+              {message.sender === 'BOT' && <img src={BotIcon} alt="Bot" className="bot-avatar" />}
+              <div className="message-content">
+                {typeof message.content === 'string' 
+                  ? message.content 
+                  : message.content.query}
+              </div>
             </div>
-            {message.goods && message.goods.length > 0 && (
+            {message.sender === 'BOT' && 
+              'goods' in message && 
+              message.goods && (
               <div className="cards-container">
                 <div className="car-cards">
                   {message.goods.map((car) => (
