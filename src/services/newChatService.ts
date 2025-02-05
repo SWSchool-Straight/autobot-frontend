@@ -49,12 +49,14 @@ export const newChatService = {
             const response = await chatApi.getConversations();
             
             if (response.status === 200 && response.info) {
-                return response.info.sort((a: any, b: any) => 
-                    new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-                );
+                return response.info
+                    .sort((a: any, b: any) => 
+                        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+                    )
+                    .slice(0, 5); // 기본값으로 5개 제한
             }
             
-            return [];
+            return response.info;
         } catch (error) {
             console.error('대화 목록 조회 중 에러 발생:', error);
             throw error;

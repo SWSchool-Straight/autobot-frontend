@@ -134,6 +134,32 @@ const AppContent = () => {
     }
   }, [user]);
 
+  React.useEffect(() => {
+    const loadConversationHistory = async () => {
+      try {
+        const conversations = await newChatService.getConversationList();
+        setNavigation(prev => {
+          const newNav = [...prev];
+          const historyItem = newNav.find(item => item.segment === 'history');
+          
+          if (historyItem) {
+            historyItem.children = conversations.map(conv => ({
+              segment: `${conv.conversationId}`,
+              title: conv.title
+            }));
+          }
+          return newNav;
+        });
+      } catch (error) {
+        console.error('대화 기록 로딩 실패:', error);
+      }
+    };
+
+    if (isAuthenticated) {
+      loadConversationHistory();
+    }
+  }, [isAuthenticated]);
+
   return (
     <AppProvider
       navigation={navigation}
