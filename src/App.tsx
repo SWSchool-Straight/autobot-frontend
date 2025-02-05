@@ -158,7 +158,7 @@ const AppContent = () => {
     if (isAuthenticated) {
       loadConversationHistory();
     }
-  }, [isAuthenticated]);
+  }, [isAuthenticated, navigate, location.pathname]);
 
   return (
     <AppProvider

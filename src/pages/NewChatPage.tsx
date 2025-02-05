@@ -5,7 +5,7 @@ import '../styles/chatbot-custom.css';  // chatbot CSS 임포트
 import { newChatService } from '../services/newChatService';
 import { useChatService } from '../contexts/ChatServiceContext';
 
-export default function NewChatPage() {
+const NewChatPage: React.FC = () => {
   const navigate = useNavigate();
   const { addNewConversation } = useChatService();
 
@@ -42,3 +42,5 @@ export default function NewChatPage() {
     </div>
   );
 } 
+
+export default NewChatPage;
