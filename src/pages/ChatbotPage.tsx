@@ -18,6 +18,7 @@ const ChatbotPage: React.FC = () => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const location = useLocation();
   const { conversationId } = useParams<{ conversationId: string }>();
+  const navigate = useNavigate();
   
   // 초기화 여부를 추적하는 ref
   const isInitialized = useRef(false);
@@ -86,6 +87,34 @@ const ChatbotPage: React.FC = () => {
     isInitialized.current = false;  // 새로운 conversationId로 이동할 때마다 초기화
     initializeChat();
   }, [conversationId, isAuthenticated]);
+
+  // 새로고침 감지 및 경고 메시지 표시
+  useEffect(() => {
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      if (!isAuthenticated && messages.length > 0) {
+        e.preventDefault();
+        return (e.returnValue = "로그인하지 않은 상태에서는 새로고침 시 대화 내용이 모두 사라집니다. 계속하시겠습니까?");
+      }
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+  }, [isAuthenticated, messages]);
+
+  // 페이지 로드 시 체크
+  useEffect(() => {
+    if (!isAuthenticated && conversationId && !initialMessage.current) {
+      const confirmRefresh = window.confirm(
+        "로그인하지 않은 상태에서는 이전 대화 내용을 불러올 수 없습니다. 새로운 대화를 시작하시겠습니까?"
+      );
+      
+      if (confirmRefresh) {
+        navigate('/chatbot'); // 새로운 채팅 시작을 위해 기본 경로로 이동
+      } else {
+        window.history.back(); // 이전 페이지로 돌아가기
+      }
+    }
+  }, [isAuthenticated, conversationId, navigate]);
 
   // 메시지 전송 처리
   const handleSendMessage = async (e: React.FormEvent, message: string) => {
