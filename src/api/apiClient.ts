@@ -21,7 +21,7 @@ export const chatApiClient = axios.create({
     "Content-Type": "application/json",
   },
   withCredentials: true,
-  timeout: 5000,
+  timeout: 30000,
 }); 
 
 // 인터셉터 설정

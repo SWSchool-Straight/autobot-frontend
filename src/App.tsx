@@ -112,11 +112,9 @@ const AppContent = () => {
 
   const chatServiceContextValue = {
     createTab: async (content: string) => {
-      await newChatService.createTab(
-        content,
-        (conversationId, title) => updateNavigation(conversationId, title),
-        (path) => navigate(path)
-      );
+      const result = await newChatService.createTab(content);
+      updateNavigation(result.conversationId, result.title);
+      return result;
     },
     addNewConversation: (title: string, id: number) => {
       updateNavigation(id, title);

@@ -1,6 +1,6 @@
 import { chatApi } from '../api/chatApi';
 import { ApiResponse } from '../api/apiResponse';
-import { ChatMessage, BotMessage, UserMessage, BotChatMessage } from '../types/chat';
+import { ChatMessage, BotMessage, UserMessage, BotChatMessage, Conversation } from '../types/chat';
 
 
 export const chatService = {
@@ -15,24 +15,24 @@ export const chatService = {
       return messages;
     }
     
-    if (bedrockResponse.query) {
+    if (bedrockResponse.goods?.length > 0) {
+      messages.push({
+        messageId: Date.now() + 1,
+        conversationId: response.conversationId,
+        content: bedrockResponse,
+        sender: 'BOT',
+        sentAt: now,
+        goods: bedrockResponse.goods
+      });
+    }
+
+    else if (bedrockResponse.query) {
       messages.push({
         messageId: Date.now(),
         conversationId: response.conversationId,
         content: bedrockResponse.query,
         sender: 'BOT',
         sentAt: now
-      });
-    }
-
-    if (bedrockResponse.goods?.length > 0) {
-      messages.push({
-        messageId: Date.now() + 1,
-        conversationId: response.conversationId,
-        content: '아래는 검색된 차량들입니다.',
-        sender: 'BOT',
-        sentAt: now,
-        goods: bedrockResponse.goods
       });
     }
 
@@ -70,6 +70,7 @@ export const chatService = {
     };
   },
 
+  // 메시지 전송
   async sendMessage(
     conversationId: number,
     content: string
@@ -84,5 +85,15 @@ export const chatService = {
       console.error('메시지 전송 중 에러 발생:', error);
       throw error;
     }
+  },
+
+  // 대화 내용 조회
+  async getChathistory(conversationId: number): Promise<ChatMessage[]> {
+    const response = await chatApi.getConversation(conversationId);
+    console.log(response);
+    if (!response.info) {
+      throw new Error('응답 데이터가 없습니다.');
+    }
+    return response.info;
   }
 }; 

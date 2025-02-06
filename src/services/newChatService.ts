@@ -1,5 +1,5 @@
 import { chatApi } from '../api/chatApi';
-import { Conversation } from '../types/chat';
+import { BotMessage, Conversation } from '../types/chat';
 
 // 현재 대화 ID를 저장할 변수
 let currentConversationId: number | null = null;
@@ -18,28 +18,20 @@ export const newChatService = {
     },
     
     // 대화 기록 탭 생성
-    async createTab(
-        content: string,
-        onSuccess: (conversationId: number, title: string) => void,
-        onNavigate: (path: string) => void
-      ): Promise<void> {
+    async createTab(content: string): Promise<{conversationId: number, title: string}> {
         try {
-          const response = await chatApi.createConversation(content);
-          
-          if (response.status === 201) {
-            const conversationId = response.info?.conversationId;
-            const title = response.info?.title;
-
-            if (conversationId) {
-              this.setCurrentConversationId(conversationId);
-              onSuccess(conversationId, title || '새 대화');
-              onNavigate(`/history/${conversationId}`);
+            const response = await chatApi.createConversation(content);
+            
+            if (response.status === 201 && response.info?.conversationId) {
+                const conversationId = response.info.conversationId;
+                const title = response.info.title || '새 대화';
+                this.setCurrentConversationId(conversationId);
+                return { conversationId, title };
             }
-          }
-
+            throw new Error('채팅방 생성 실패');
         } catch (error) {
-          console.error('대화 생성 중 에러 발생:', error);
-          throw error;
+            console.error('대화 생성 중 에러 발생:', error);
+            throw error;
         }
     },
 
@@ -53,13 +45,12 @@ export const newChatService = {
                     .sort((a: any, b: any) => 
                         new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
                     )
-                    .slice(0, 5); // 기본값으로 5개 제한
+                    .slice(0, 5);
             }
-            
             return response.info;
         } catch (error) {
             console.error('대화 목록 조회 중 에러 발생:', error);
             throw error;
         }
-    },
-}
+    }
+};

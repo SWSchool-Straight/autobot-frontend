@@ -1,7 +1,9 @@
 import React, { createContext, useContext } from 'react';
 
 interface ChatServiceContextType {
-  createTab: (content: string) => Promise<void>;
+  // 채팅방 생성만 담당
+  createTab: (content: string) => Promise<{conversationId: number, title: string}>;
+  // 네비게이션 업데이트만 담당
   addNewConversation: (title: string, id: number) => void;
 }
 
