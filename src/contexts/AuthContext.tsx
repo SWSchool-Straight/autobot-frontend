@@ -55,6 +55,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setIsAuthenticated(false);
     setUser(null);
     setAccessToken(null);
+    // 홈 화면으로 이동 후 새로고침
+    window.location.href = '/chatbot';
   };
 
   return (

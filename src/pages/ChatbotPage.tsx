@@ -88,33 +88,57 @@ const ChatbotPage: React.FC = () => {
     initializeChat();
   }, [conversationId, isAuthenticated]);
 
-  // 새로고침 감지 및 경고 메시지 표시
+  // 새로고침 감지 및 처리
   useEffect(() => {
-    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
-      if (!isAuthenticated && messages.length > 0) {
-        e.preventDefault();
-        return (e.returnValue = "로그인하지 않은 상태에서는 새로고침 시 대화 내용이 모두 사라집니다. 계속하시겠습니까?");
+    const handleBeforeUnload = () => {
+      if (!isAuthenticated) {
+        sessionStorage.removeItem('chatMessages');
+        sessionStorage.removeItem('currentConversationId');
+        // 새로고침 시 기본 채팅 경로로 리다이렉트하기 위한 플래그 설정
+        sessionStorage.setItem('shouldRedirect', 'true');
       }
     };
 
+    // 페이지 로드 시 리다이렉트 체크
+    const shouldRedirect = sessionStorage.getItem('shouldRedirect');
+    if (shouldRedirect === 'true' && conversationId) {
+      sessionStorage.removeItem('shouldRedirect');
+      navigate('/chatbot');
+    }
+
     window.addEventListener('beforeunload', handleBeforeUnload);
     return () => window.removeEventListener('beforeunload', handleBeforeUnload);
-  }, [isAuthenticated, messages]);
+  }, [isAuthenticated, conversationId, navigate]);
 
-  // 페이지 로드 시 체크
+  // 메시지 상태가 변경될 때마다 세션 스토리지에 저장
   useEffect(() => {
-    if (!isAuthenticated && conversationId && !initialMessage.current) {
-      const confirmRefresh = window.confirm(
-        "로그인하지 않은 상태에서는 이전 대화 내용을 불러올 수 없습니다. 새로운 대화를 시작하시겠습니까?"
-      );
+    if (!isAuthenticated && messages.length > 0) {
+      sessionStorage.setItem('chatMessages', JSON.stringify(messages));
+      sessionStorage.setItem('currentConversationId', conversationId || '');
+    }
+  }, [messages, conversationId, isAuthenticated]);
+
+  // 컴포넌트 마운트 시 세션 스토리지에서 메시지 복원
+  useEffect(() => {
+    if (!isAuthenticated && !initialMessage.current) {
+      const savedMessages = sessionStorage.getItem('chatMessages');
+      const savedConversationId = sessionStorage.getItem('currentConversationId');
       
-      if (confirmRefresh) {
-        navigate('/chatbot'); // 새로운 채팅 시작을 위해 기본 경로로 이동
-      } else {
-        window.history.back(); // 이전 페이지로 돌아가기
+      if (savedMessages && savedConversationId === conversationId) {
+        setMessages(JSON.parse(savedMessages));
       }
     }
-  }, [isAuthenticated, conversationId, navigate]);
+  }, [conversationId, isAuthenticated]);
+
+  // 로그아웃 시 세션 스토리지 클리어
+  useEffect(() => {
+    if (!isAuthenticated) {
+      return () => {
+        sessionStorage.removeItem('chatMessages');
+        sessionStorage.removeItem('currentConversationId');
+      };
+    }
+  }, [isAuthenticated]);
 
   // 메시지 전송 처리
   const handleSendMessage = async (e: React.FormEvent, message: string) => {
@@ -140,8 +164,8 @@ const ChatbotPage: React.FC = () => {
 
   const handleCardClick = (e: React.MouseEvent<HTMLAnchorElement>, url: string) => {
     e.preventDefault();
-    setIsPageLoading(true);
-    window.location.href = url;
+    // setIsPageLoading(true);
+    window.open(url, '_blank'); // 새 탭에서 열기
   };
 
   const LoginBanner = () => (
