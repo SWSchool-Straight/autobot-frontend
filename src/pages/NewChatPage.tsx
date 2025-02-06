@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useNavigate } from 'react-router-dom';
 import WelcomeChat from '../components/WelcomeChat';
-import '../styles/chatbot-custom.css';  // chatbot CSS 임포트
+import '../styles/welcome-screen.css';  // chatbot CSS 임포트
 import { useChatService } from '../contexts/ChatServiceContext';
 
 const NewChatPage: React.FC = () => {

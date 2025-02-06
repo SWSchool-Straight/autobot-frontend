@@ -18,6 +18,7 @@ const ChatbotPage: React.FC = () => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const location = useLocation();
   const { conversationId } = useParams<{ conversationId: string }>();
+  const navigate = useNavigate();
   
   // 초기화 여부를 추적하는 ref
   const isInitialized = useRef(false);
@@ -87,6 +88,58 @@ const ChatbotPage: React.FC = () => {
     initializeChat();
   }, [conversationId, isAuthenticated]);
 
+  // 새로고침 감지 및 처리
+  useEffect(() => {
+    const handleBeforeUnload = () => {
+      if (!isAuthenticated) {
+        sessionStorage.removeItem('chatMessages');
+        sessionStorage.removeItem('currentConversationId');
+        // 새로고침 시 기본 채팅 경로로 리다이렉트하기 위한 플래그 설정
+        sessionStorage.setItem('shouldRedirect', 'true');
+      }
+    };
+
+    // 페이지 로드 시 리다이렉트 체크
+    const shouldRedirect = sessionStorage.getItem('shouldRedirect');
+    if (shouldRedirect === 'true' && conversationId) {
+      sessionStorage.removeItem('shouldRedirect');
+      navigate('/chatbot');
+    }
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+  }, [isAuthenticated, conversationId, navigate]);
+
+  // 메시지 상태가 변경될 때마다 세션 스토리지에 저장
+  useEffect(() => {
+    if (!isAuthenticated && messages.length > 0) {
+      sessionStorage.setItem('chatMessages', JSON.stringify(messages));
+      sessionStorage.setItem('currentConversationId', conversationId || '');
+    }
+  }, [messages, conversationId, isAuthenticated]);
+
+  // 컴포넌트 마운트 시 세션 스토리지에서 메시지 복원
+  useEffect(() => {
+    if (!isAuthenticated && !initialMessage.current) {
+      const savedMessages = sessionStorage.getItem('chatMessages');
+      const savedConversationId = sessionStorage.getItem('currentConversationId');
+      
+      if (savedMessages && savedConversationId === conversationId) {
+        setMessages(JSON.parse(savedMessages));
+      }
+    }
+  }, [conversationId, isAuthenticated]);
+
+  // 로그아웃 시 세션 스토리지 클리어
+  useEffect(() => {
+    if (!isAuthenticated) {
+      return () => {
+        sessionStorage.removeItem('chatMessages');
+        sessionStorage.removeItem('currentConversationId');
+      };
+    }
+  }, [isAuthenticated]);
+
   // 메시지 전송 처리
   const handleSendMessage = async (e: React.FormEvent, message: string) => {
     e.preventDefault();
@@ -111,8 +164,8 @@ const ChatbotPage: React.FC = () => {
 
   const handleCardClick = (e: React.MouseEvent<HTMLAnchorElement>, url: string) => {
     e.preventDefault();
-    setIsPageLoading(true);
-    window.location.href = url;
+    // setIsPageLoading(true);
+    window.open(url, '_blank'); // 새 탭에서 열기
   };
 
   const LoginBanner = () => (

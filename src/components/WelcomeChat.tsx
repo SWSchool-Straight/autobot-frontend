@@ -28,14 +28,14 @@ export default function WelcomeChat({ onStartChat }: WelcomeChatProps) {
         <div className="welcome-examples">
           <p>다음과 같은 것들을 물어보실 수 있습니다:</p>
           <div className="example-queries">
-            <button onClick={() => handleExampleClick("2년 미만 중고차를 보여줘")}>
-              2년 미만 중고차를 보여줘
+            <button onClick={() => handleExampleClick("최근 6개월 내 등록된 그랜저 매물 찾아줘")}>
+              최근 6개월 내 등록된 그랜저 매물 찾아줘
             </button>
-            <button onClick={() => handleExampleClick("2023 그랜저 추천해줘")}>
-              2023 그랜저 추천해줘
+            <button onClick={() => handleExampleClick("주행거리 3만km 이하인 투싼 추천해줘")}>
+              주행거리 3만km 이하인 투싼 추천해줘
             </button>
-            <button onClick={() => handleExampleClick("3000만원 이하 차량 찾아줘")}>
-              3000만원 이하 차량 찾아줘
+            <button onClick={() => handleExampleClick("4천만원 이하 신차급 SUV 추천해줘")}>
+              4천만원 이하 신차급 SUV 추천해줘
             </button>
           </div>
         </div>

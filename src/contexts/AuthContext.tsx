@@ -48,15 +48,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const logout = () => {
-    const email = user?.email; // 현재 사용자 이메일 가져오기
-    if (email) {
-        handleLogout(email, () => {
-            clearAccessToken(); // 액세스 토큰 제거
-            clearCurrentEmail();  // 이메일 제거
-            setUser(null);
-            setIsAuthenticated(false);
-        });
-    }
+    // 로컬 스토리지의 모든 인증 관련 데이터 삭제
+    localStorage.removeItem('accessToken');
+    localStorage.removeItem('email');
+    // 상태 초기화
+    setIsAuthenticated(false);
+    setUser(null);
+    setAccessToken(null);
+    // 홈 화면으로 이동 후 새로고침
+    window.location.href = '/chatbot';
   };
 
   return (

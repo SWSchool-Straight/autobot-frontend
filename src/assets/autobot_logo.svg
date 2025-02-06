@@ -1,0 +1,7 @@
+<svg width="120" height="40" viewBox="0 0 120 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- 오토봇 텍스트 -->
+  <text x="10" y="25" font-family="Arial" font-size="22" font-weight="bold" fill="#002C5F">AUTOBOT</text>
+  
+  <!-- 밑줄 장식 -->
+  <path d="M5 28H118" stroke="#386596" stroke-width="1"/>
+</svg>

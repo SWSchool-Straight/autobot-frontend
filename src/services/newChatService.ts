@@ -44,7 +44,7 @@ export const newChatService = {
                     .sort((a: any, b: any) => 
                         new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
                     )
-                    .slice(0, 5);
+                    .slice(0, 10);
             }
             return response.info;
         } catch (error) {

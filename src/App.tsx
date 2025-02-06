@@ -33,8 +33,8 @@ interface NavigationItem {
 }
 
 const BRANDING = {
-  logo: <img src="src/assets/logo.png" alt="hyundai logo" />,
-  title: 'Chatbot',
+  logo: <img src="src/assets/autobot_logo.svg" alt="hyundai logo" />,
+  title: '',
 };
 
 const AppContent = () => {
