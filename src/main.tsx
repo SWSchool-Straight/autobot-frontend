@@ -3,10 +3,9 @@ import * as ReactDOM from 'react-dom/client';
 import { createBrowserRouter, RouterProvider, Navigate, Outlet } from 'react-router-dom';
 import App from './App';
 import ChatbotPage from './pages/ChatbotPage';
-import HistoryPage from './pages/HistoryPage';
+import NewChatPage from './pages/NewChatPage';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
-import HomePage from './pages/HomePage';
 import { AuthProvider } from './contexts/AuthContext';
 import { DashboardLayout } from '@toolpad/core/DashboardLayout';
 
@@ -16,26 +15,27 @@ const router = createBrowserRouter([
     element: <App />,
     children: [
       {
-        path: '/',
-        element: <DashboardLayout>
-          <Outlet />
-        </DashboardLayout>,
+        index: true,
+        element: <NewChatPage />
+      },
+      {
+        path: 'chatbot',
+        element: <NewChatPage />,
+      },
+      {
+        path: 'history',
         children: [
           {
             index: true,
-            element: <HomePage />
+            element: <ChatbotPage />
           },
           {
-            path: 'chatbot',
-            element: <ChatbotPage />,
-          },
-          {
-            path: 'history',
-            element: <HistoryPage />,
+            path: ':conversationId',
+            element: <ChatbotPage />
           }
         ]
       }
-    ],
+    ]
   },
   {
     path: '/login',

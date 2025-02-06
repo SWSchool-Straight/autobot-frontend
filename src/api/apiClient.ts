@@ -21,7 +21,7 @@ export const chatApiClient = axios.create({
     "Content-Type": "application/json",
   },
   withCredentials: true,
-  timeout: 5000,
+  timeout: 30000,
 }); 
 
 // 인터셉터 설정
@@ -58,6 +58,47 @@ authApiClient.interceptors.response.use(
           setAccessToken(newToken);
           originalRequest.headers['Authorization'] = `Bearer ${newToken}`; // 헤더에 새로운 토큰 추가
           return authApiClient(originalRequest); // 원래 요청 재전송
+        }
+      } catch (error) {
+        return Promise.reject(error);
+      }
+    }
+    return Promise.reject(error);
+  }
+); 
+
+// 채팅 API 인터셉터 설정
+chatApiClient.interceptors.request.use(
+  async (config) => {
+    const token = getAccessToken();
+    if (token) {
+      // 토큰이 있는 경우만 Authorization 헤더 추가
+      config.headers['Authorization'] = `Bearer ${token}`;
+    
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
+
+// 채팅 API 응답 인터셉터 설정
+chatApiClient.interceptors.response.use(
+  (response) => response,
+  async (error) => {
+    const originalRequest = error.config;
+
+    // 401 에러이고 토큰이 있는 경우에만 토큰 갱신 시도
+    if (error.response?.status === 401 && getAccessToken() && !originalRequest._retry) {
+      originalRequest._retry = true;
+      try {
+        const { logout } = useAuth();
+        const newToken = await getNewToken(logout);
+        if (newToken) {
+          setAccessToken(newToken);
+          originalRequest.headers['Authorization'] = `Bearer ${newToken}`;
+          return chatApiClient(originalRequest);
         }
       } catch (error) {
         return Promise.reject(error);
