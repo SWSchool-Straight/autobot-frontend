@@ -84,7 +84,7 @@ const AppContent = () => {
     },
   };
 
-  const updateNavigation = (conversationId: number, title: string) => {
+  const updateNavigation = (conversationId: string, title: string) => {
     setNavigation(prev => {
       const newNav = [...prev];
       const historyItem = newNav.find(item => item.segment === 'history');
@@ -116,7 +116,7 @@ const AppContent = () => {
       updateNavigation(result.conversationId, result.title);
       return result;
     },
-    addNewConversation: (title: string, id: number) => {
+    addNewConversation: (title: string, id: string) => {
       updateNavigation(id, title);
     }
   };

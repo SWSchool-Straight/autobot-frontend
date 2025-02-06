@@ -1,32 +1,31 @@
 import { chatApi } from '../api/chatApi';
-import { BotMessage, Conversation } from '../types/chat';
 
 // 현재 대화 ID를 저장할 변수
-let currentConversationId: number | null = null;
+let currentConversationId: string | null = null;
 
 // 대화 생성 서비스
 export const newChatService = {
 
     // 현재 대화 ID 반환
-    getCurrentConversationId(): number | null {
+    getCurrentConversationId(): string | null {
         return currentConversationId;
     },
     
     // 현재 대화 ID 설정
-    setCurrentConversationId(id: number | null) {
+    setCurrentConversationId(id: string | null) {
         currentConversationId = id;
     },
     
     // 대화 기록 탭 생성
-    async createTab(content: string): Promise<{conversationId: number, title: string}> {
+    async createTab(content: string): Promise<{ conversationId: string, title: string }> {
         try {
             const response = await chatApi.createConversation(content);
             
             if (response.status === 201 && response.info?.conversationId) {
                 const conversationId = response.info.conversationId;
-                const title = response.info.title || '새 대화';
+                const title: string = response.info.title || '새 대화';
                 this.setCurrentConversationId(conversationId);
-                return { conversationId, title };
+                return { conversationId: conversationId, title: title };
             }
             throw new Error('채팅방 생성 실패');
         } catch (error) {
@@ -36,7 +35,7 @@ export const newChatService = {
     },
 
     // 대화 목록 조회
-    async getConversationList(): Promise<Array<Conversation>> {
+    async getConversationList(): Promise<Array<{ conversationId: string, title: string }>> {
         try {
             const response = await chatApi.getConversations();
             

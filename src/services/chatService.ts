@@ -1,5 +1,4 @@
 import { chatApi } from '../api/chatApi';
-import { ApiResponse } from '../api/apiResponse';
 import { ChatMessage, BotMessage, UserMessage, BotChatMessage, Conversation } from '../types/chat';
 
 
@@ -17,16 +16,14 @@ export const chatService = {
     
     if (bedrockResponse.goods?.length > 0) {
       messages.push({
-        messageId: Date.now() + 1,
+        messageId: Date.now(),
         conversationId: response.conversationId,
-        content: bedrockResponse,
+        content: bedrockResponse.query,
         sender: 'BOT',
         sentAt: now,
         goods: bedrockResponse.goods
       });
-    }
-
-    else if (bedrockResponse.query) {
+    } else {
       messages.push({
         messageId: Date.now(),
         conversationId: response.conversationId,
@@ -38,7 +35,7 @@ export const chatService = {
 
     if (!isAuthenticated) {
       messages.push({
-        messageId: Date.now() + 2,
+        messageId: Date.now() + 1,
         conversationId: response.conversationId,
         content: '💡 지금 로그인하시면 채팅 기록이 저장됩니다. 로그아웃하거나 새로고침하면 대화 기록이 사라집니다.',
         sender: 'BOT',
@@ -46,11 +43,11 @@ export const chatService = {
         isSystemMessage: true
       });
     }
-
+    
     return messages;
   },
 
-  createUserMessage(content: string, conversationId: number): UserMessage {
+  createUserMessage(content: string, conversationId: string): UserMessage {
     return {
       messageId: Date.now(),
       conversationId,
@@ -60,7 +57,7 @@ export const chatService = {
     };
   },
 
-  createErrorMessage(conversationId: number): BotChatMessage {
+  createErrorMessage(conversationId: string): BotChatMessage {
     return {
       messageId: Date.now(),
       conversationId,
@@ -72,7 +69,7 @@ export const chatService = {
 
   // 메시지 전송
   async sendMessage(
-    conversationId: number,
+    conversationId: string,
     content: string
   ): Promise<BotMessage> {
     try {
@@ -88,12 +85,48 @@ export const chatService = {
   },
 
   // 대화 내용 조회
-  async getChathistory(conversationId: number): Promise<ChatMessage[]> {
+  async getChathistory(conversationId: string): Promise<ChatMessage[]> {
     const response = await chatApi.getConversation(conversationId);
-    console.log(response);
+    console.log('채팅 기록 응답:', response); // 디버깅용 로그 추가
+    
     if (!response.info) {
       throw new Error('응답 데이터가 없습니다.');
     }
-    return response.info;
+
+    return response.info.map((message: any): ChatMessage => {
+      const baseMessage = {
+        messageId: message.messageId,
+        conversationId: message.conversationId,
+        sender: message.sender,
+        sentAt: message.sentAt
+      };
+
+      // USER 메시지인 경우
+      if (message.sender === 'USER') {
+        return {
+          ...baseMessage,
+          sender: 'USER',
+          content: `${message.content}`  // String() 대신 템플릿 리터럴 사용
+        } as UserMessage;
+      }
+
+      // BOT 메시지인 경우
+      const botMessage = {
+        ...baseMessage,
+        sender: 'BOT'
+      } as BotChatMessage;
+
+      // content가 객체인 경우 (차량 정보가 포함된 경우)
+      if (typeof message.content === 'object') {
+        botMessage.content = message.content.query;
+        if (message.content.goods) {
+          botMessage.goods = message.content.goods;
+        }
+      } else {
+        botMessage.content = message.content;
+      }
+
+      return botMessage;
+    });
   }
 }; 

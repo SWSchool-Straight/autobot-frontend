@@ -36,7 +36,7 @@ const ChatbotPage: React.FC = () => {
   // 채팅방 초기화
   useEffect(() => {
     const initializeChat = async () => {
-      if (!conversationId) return;
+      if (conversationId === undefined) return;
       if (isProcessing.current) return;  // 이미 처리 중이면 실행하지 않음
       
       isProcessing.current = true;  // 처리 시작
@@ -45,10 +45,10 @@ const ChatbotPage: React.FC = () => {
       try {
         if (initialMessage.current) {
           const message = initialMessage.current;
-          const userMessage = chatService.createUserMessage(message, Number(conversationId));
+          const userMessage = chatService.createUserMessage(message, conversationId || '');
           setMessages([userMessage]);
           
-          const response = await chatService.sendMessage(Number(conversationId), message);
+          const response = await chatService.sendMessage(conversationId, message);
           const botMessages = chatService.createBotMessages(response, isAuthenticated);
           setMessages([userMessage, ...botMessages]);
           
@@ -56,16 +56,16 @@ const ChatbotPage: React.FC = () => {
         } 
         else if (isAuthenticated) {
           // 채팅 기록 로드
-          const response = await chatService.getChathistory(Number(conversationId));
+          const response = await chatService.getChathistory(conversationId);
           
           // 채팅 기록이 비어있고 location.state에 initialMessage가 있다면
           // (페이지 새로고침 등의 경우)
           if (response.length === 0 && location.state?.initialMessage) {
             const message = location.state.initialMessage;
-            const userMessage = chatService.createUserMessage(message, Number(conversationId));
+            const userMessage = chatService.createUserMessage(message, conversationId || '');
             setMessages([userMessage]);
             
-            const chatResponse = await chatService.sendMessage(Number(conversationId), message);
+            const chatResponse = await chatService.sendMessage(conversationId, message);
             const botMessages = chatService.createBotMessages(chatResponse, isAuthenticated);
             setMessages([userMessage, ...botMessages]);
           } else {
@@ -75,7 +75,7 @@ const ChatbotPage: React.FC = () => {
         isInitialized.current = true;
       } catch (error) {
         console.error('채팅 초기화 중 오류 발생:', error);
-        const errorMessage = chatService.createErrorMessage(Number(conversationId));
+        const errorMessage = chatService.createErrorMessage(conversationId);
         setMessages([errorMessage]);
       } finally {
         setIsLoading(false);
@@ -92,17 +92,17 @@ const ChatbotPage: React.FC = () => {
     e.preventDefault();
     if (!message.trim() || isLoading) return; // 로딩 중이면 메시지 전송 불가
 
-    const userMessage = chatService.createUserMessage(message, Number(conversationId));
+    const userMessage = chatService.createUserMessage(message, conversationId || '');
     setMessages(prev => [...prev, userMessage]);
     setInputMessage('');
     setIsLoading(true); // 로딩 시작
 
     try {
-      const chatResponse = await chatService.sendMessage(Number(conversationId), message);
+      const chatResponse = await chatService.sendMessage(conversationId || '', message);
       const botMessages = chatService.createBotMessages(chatResponse, isAuthenticated);
       setMessages(prev => [...prev, ...botMessages]);
     } catch (error) {
-      const errorMessage = chatService.createErrorMessage(Number(conversationId));
+      const errorMessage = chatService.createErrorMessage(conversationId || '');
       setMessages(prev => [...prev, errorMessage]);
     } finally {
       setIsLoading(false); // 로딩 완료

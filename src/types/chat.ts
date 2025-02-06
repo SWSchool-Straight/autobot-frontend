@@ -3,7 +3,7 @@ export type Sender = 'USER' | 'BOT';
 // 기본 메시지 타입
 interface BaseMessage {
   messageId: number;
-  conversationId: number;
+  conversationId: string;
   sender: Sender;
   sentAt: string;
   isSystemMessage?: boolean;
@@ -47,13 +47,13 @@ export interface BedrockResponse {
 export interface BotMessage {
   createdAt: string;
   bedrockResponse: BedrockResponse;
-  conversationId: number;
+  conversationId: string;
   title: string;
 }
 
 // 대화 목록 조회시 사용하는 타입
 export interface Conversation {
-  conversationId: number;
+  conversationId: string;
   title: string;
   createdAt: string;
 }

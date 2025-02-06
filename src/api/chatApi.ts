@@ -7,6 +7,7 @@ export const chatApi = {
    * 새로운 대화 시작
    */
   async createConversation(content: string): Promise<ApiResponse<Conversation>> {
+    console.log('대화 생성 시작:', { content });
     const response = await chatApiClient.post('/api/conversations', { content });
     return response.data;
   },
@@ -14,10 +15,12 @@ export const chatApi = {
   /**
    * 기존 대화에 메시지 추가
    */
-  async sendMessage(conversationId: number, content: string): Promise<ApiResponse<BotMessage>>  {
+  async sendMessage(conversationId: string, content: string): Promise<ApiResponse<BotMessage>>  {
     try {
-      console.log('메시지 전송 시작:', { conversationId, content });
-      const response = await chatApiClient.post(`/api/conversations/${conversationId}/messages`, { content });
+      const response = await chatApiClient.post(`/api/conversations/${conversationId}/messages`, {
+        content: `${content}`,  // 또는 content.toString()
+        sender: 'USER'
+      });
       console.log('메시지 전송 성공:', response.data);
       return response.data;
     } catch (error) {
@@ -35,7 +38,7 @@ export const chatApi = {
   /**
    * 채팅방 내에서 대화 조회
    */
-  async getConversation(conversationId: number): Promise<ApiResponse<ChatMessage[]>> {
+  async getConversation(conversationId: string): Promise<ApiResponse<ChatMessage[]>> {
     const response = await chatApiClient.get(`/api/conversations/${conversationId}/messages`);
     return response.data;
   },
