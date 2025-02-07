@@ -30,7 +30,6 @@ deploy-to-s3:
   script:
     - pip install awscli
     - aws s3 sync dist/ s3://$S3_BUCKET_NAME --delete
-    - aws s3 cp s3://$S3_BUCKET_NAME s3://$S3_BUCKET_NAME --recursive --acl public-read
   dependencies:
     - build
   only:
