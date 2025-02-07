@@ -1,10 +1,5 @@
 image: node:latest  # 빌드를 위한 Node.js
 
-variables:
-  AWS_DEFAULT_REGION: ap-northeast-2  # AWS 리전
-  BUCKET_NAME: "straight-frontend"     # S3 버킷 이름
-  # DISTRIBUTION_ID: "E41D4NX9HHX09"  # CloudFront 배포 ID
-
 stages:
   - build
   - deploy
@@ -35,7 +30,7 @@ deploy-to-s3:
     # 빌드된 파일들을 S3에 동기화
     - aws s3 sync dist/ s3://$BUCKET_NAME --delete
     # 모든 파일에 대해 public-read 권한 설정
-    - aws s3 cp s3://$BUCKET_NAME s3://$BUCKET_NAME --recursive --acl public-read
+    - aws s3 cp s3://$S3_BUCKET_NAME s3://$S3_BUCKET_NAME --recursive --acl public-read
   dependencies:
     - build
   only:
