@@ -11,8 +11,10 @@ cache:
 build:
   stage: build
   tags:
-  - frontend-runner
+    - frontend-runner
   script:
+    - echo "VITE_CHAT_BASE_URL=${VITE_CHAT_BASE_URL}" >> .env
+    - echo "VITE_AUTH_BASE_URL=${VITE_AUTH_BASE_URL}" >> .env
     - yarn
     - yarn build
   artifacts:
