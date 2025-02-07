@@ -10,6 +10,8 @@ cache:
 
 build:
   stage: build
+  tags:
+  - frontend-runner
   script:
     - yarn
     - yarn build
@@ -22,6 +24,8 @@ build:
 
 deploy-to-s3:
   stage: deploy
+  tags:
+    - frontend-runner
   image: python:latest
   script:
     - pip install awscli
