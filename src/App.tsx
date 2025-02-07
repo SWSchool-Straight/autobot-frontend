@@ -13,6 +13,7 @@ import { ChatServiceProvider } from './contexts/ChatServiceContext';
 import { newChatService } from './services/newChatService';
 import { DashboardLayout } from '@toolpad/core/DashboardLayout';
 import NewChatPage from './pages/NewChatPage';
+import autobot_logo from './assets/autobot_logo.svg';
 
 const theme = createTheme({
   cssVariables: {
@@ -33,7 +34,7 @@ interface NavigationItem {
 }
 
 const BRANDING = {
-  logo: <img src="src/assets/autobot_logo.svg" alt="hyundai logo" />,
+  logo: <img src={autobot_logo} alt="Autobot logo" />,
   title: '',
 };
 
