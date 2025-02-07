@@ -1,4 +1,4 @@
-image: node:latest  # 빌드를 위한 Node.js
+image: node:latest
 
 stages:
   - build
@@ -11,28 +11,23 @@ cache:
 build:
   stage: build
   script:
-    - yarn # 의존성 설치
-    - yarn build  # 프로덕션 빌드
+    - yarn
+    - yarn build
   artifacts:
     paths:
-      - dist/  # 빌드된 정적 파일들
+      - dist/
     expire_in: 1 hour
   only:
-    - main  # main 브랜치에 push될 때만 실행
-
+    - main
 
 deploy-to-s3:
   stage: deploy
-  # aws cli를 설치하기 위해서 python image를 사용합니다.
   image: python:latest
   script:
     - pip install awscli
-    # 빌드된 파일들을 S3에 동기화
-    - aws s3 sync dist/ s3://$BUCKET_NAME --delete
-    # 모든 파일에 대해 public-read 권한 설정
+    - aws s3 sync dist/ s3://$S3_BUCKET_NAME --delete
     - aws s3 cp s3://$S3_BUCKET_NAME s3://$S3_BUCKET_NAME --recursive --acl public-read
   dependencies:
     - build
   only:
-    - main    # main 브랜치에 push될 때만 실행
-  when: manual
+    - main
