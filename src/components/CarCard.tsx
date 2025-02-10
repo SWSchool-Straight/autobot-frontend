@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { CarInfo } from '../types/chat';
+import '../styles/car-card.css';
 
 interface CarCardProps {
   car: CarInfo;
@@ -60,6 +61,29 @@ const CarCard = ({ car, onCardClick }: CarCardProps) => {
             <span className="label">판매가격</span>
             <span>{Number(car.totalPurchaseAmount).toLocaleString()}원</span>
           </p>
+          {car.predictedPrice !== undefined && (
+            <p className={`price-comparison ${
+              car.predictedPrice === -2 ? 'cheap' : 
+              car.predictedPrice === -1 ? 'discount' : 
+              car.predictedPrice === 0 ? 'normal' : 
+              car.predictedPrice === 1 ? 'expensive' : 
+              'premium'
+            }`}>
+              <span className="label">시세 대비</span>
+              <span>
+                {(() => {
+                  switch(car.predictedPrice) {
+                    case -2: return '특가';
+                    case -1: return '할인가';
+                    case 0: return '적정가';
+                    case 1: return '고가';
+                    case 2: return '프리미엄';
+                    default: return '적정가';
+                  }
+                })()}
+              </span>
+            </p>
+          )}
         </div>
       </div>
     </a>

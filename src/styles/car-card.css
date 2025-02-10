@@ -1,0 +1,161 @@
+.car-card {
+  width: 100%;
+  min-width: 240px;
+  max-width: 240px;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  overflow: hidden;
+  background: white;
+  text-decoration: none;
+  color: inherit;
+  transition: transform 0.2s, box-shadow 0.2s;
+  display: flex;
+  flex-direction: column;
+}
+
+.car-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.car-card img {
+  width: 100%;
+  height: 160px;
+  object-fit: cover;
+}
+
+.car-info {
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.car-info h3 {
+  margin: 0 0 0.8rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #002c5f;
+  line-height: 1.4;
+  display: -webkit-box;
+  line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  height: auto;
+  min-height: 2.8em;
+}
+
+.car-info p {
+  margin: 0.4rem 0;
+  font-size: 0.85rem;
+  color: #666;
+  display: flex;
+  justify-content: space-between;
+}
+
+.car-info .label {
+  color: #888;
+  font-weight: normal;
+}
+
+.price-info {
+  margin-top: 0.8rem;
+  padding-top: 0.8rem;
+  border-top: 1px solid #eee;
+}
+
+.original-price {
+  color: #666;
+  text-decoration: line-through;
+  font-size: 0.85rem;
+}
+
+.savings {
+  color: #e63312;
+  font-size: 0.85rem;
+}
+
+.savings-amount {
+  font-weight: 600;
+}
+
+.final-price {
+  margin-top: 0.4rem;
+  color: #002c5f;
+  font-size: 1.1rem;
+  font-weight: 700;
+  padding: 0.3rem 0;
+  border-radius: 4px;
+}
+
+.final-price .label {
+  color: #002c5f;
+  font-weight: 500;
+}
+
+.final-price span:last-child {
+  color: #002c5f;
+  font-size: 1.2rem;
+  font-weight: 700;
+}
+
+.price-comparison {
+  font-size: 0.9rem;
+  margin-top: 0.8rem;
+  padding: 0.4rem 0.8rem;
+  border-radius: 6px;
+  display: inline-block;
+}
+
+/* 특가 스타일 (-2) */
+.price-comparison.cheap span:last-child {
+  color: #2E7D32;
+  font-weight: 600;
+}
+.price-comparison.cheap {
+  background-color: #E8F5E9;
+}
+
+/* 할인가 스타일 (-1) */
+.price-comparison.discount span:last-child {
+  color: #558B2F;
+  font-weight: 600;
+}
+.price-comparison.discount {
+  background-color: #F1F8E9;
+}
+
+/* 적정가 스타일 (0) */
+.price-comparison.normal span:last-child {
+  color: #455A64;
+  font-weight: 600;
+}
+.price-comparison.normal {
+  background-color: #ECEFF1;
+}
+
+/* 고가 스타일 (1) */
+.price-comparison.expensive span:last-child {
+  color: #C62828;
+  font-weight: 600;
+}
+.price-comparison.expensive {
+  background-color: #FFEBEE;
+}
+
+/* 프리미엄 스타일 (2) */
+.price-comparison.premium span:last-child {
+  color: #6A1B9A;
+  font-weight: 600;
+}
+.price-comparison.premium {
+  background-color: #F3E5F5;
+}
+
+/* 라벨 스타일 통일 */
+.price-comparison .label {
+  color: #666;
+  font-weight: normal;
+  margin-right: 0.5rem;
+}
+  
