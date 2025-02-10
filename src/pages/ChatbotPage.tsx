@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useState, useRef, useEffect } from 'react';
-import { useLocation, useParams, useNavigate } from 'react-router-dom';
+import { useLocation, useParams, useNavigate, useBeforeUnload } from 'react-router-dom';
 import { chatService } from '../services/chatService';
 import { ChatMessage } from '../types/chat';
 import '../styles/chatbot-custom.css';
@@ -90,11 +90,13 @@ const ChatbotPage: React.FC = () => {
 
   // 새로고침 감지 및 처리
   useEffect(() => {
-    const handleBeforeUnload = () => {
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
       if (!isAuthenticated) {
+        e.preventDefault();
+        e.returnValue = '새로고침 시 모든 대화 내용이 사라집니다. 계속하시겠습니까?';
+        
         sessionStorage.removeItem('chatMessages');
         sessionStorage.removeItem('currentConversationId');
-        // 새로고침 시 기본 채팅 경로로 리다이렉트하기 위한 플래그 설정
         sessionStorage.setItem('shouldRedirect', 'true');
       }
     };
@@ -139,6 +141,33 @@ const ChatbotPage: React.FC = () => {
       };
     }
   }, [isAuthenticated]);
+
+  // 페이지 이동 전 경고 처리
+  useEffect(() => {
+    const handleBeforeNavigate = (e: BeforeUnloadEvent | PopStateEvent) => {
+      if (!isAuthenticated && messages.length > 0) {
+        if (e.type === 'beforeunload') {
+          e.preventDefault();
+          e.returnValue = '대화 내용이 저장되지 않습니다. 페이지를 나가시겠습니까?';
+        } else {
+          const confirmLeave = window.confirm('대화 내용이 저장되지 않습니다. 페이지를 나가시겠습니까?');
+          if (!confirmLeave) {
+            window.history.pushState(null, '', window.location.pathname);
+          }
+        }
+      }
+    };
+
+    // 브라우저 뒤로가기/앞으로가기 이벤트 감지
+    window.addEventListener('popstate', handleBeforeNavigate);
+    // 페이지 새로고침/닫기 이벤트 감지
+    window.addEventListener('beforeunload', handleBeforeNavigate);
+
+    return () => {
+      window.removeEventListener('popstate', handleBeforeNavigate);
+      window.removeEventListener('beforeunload', handleBeforeNavigate);
+    };
+  }, [isAuthenticated, messages.length]);
 
   // 메시지 전송 처리
   const handleSendMessage = async (e: React.FormEvent, message: string) => {

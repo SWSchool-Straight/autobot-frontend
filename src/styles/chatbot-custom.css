@@ -185,75 +185,6 @@
   display: none;
 }
 
-.car-card {
-  width: 100%;
-  min-width: 240px;
-  max-width: 240px;
-  border: 1px solid #ddd;
-  border-radius: 12px;
-  overflow: hidden;
-  background: white;
-  text-decoration: none;
-  color: inherit;
-  transition: transform 0.2s, box-shadow 0.2s;
-  display: flex;
-  flex-direction: column;
-}
-
-.car-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-}
-
-.car-card img {
-  width: 100%;
-  height: 160px;
-  object-fit: cover;
-}
-
-.car-info {
-  padding: 1rem;
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-}
-
-.car-info h3 {
-  margin: 0 0 0.8rem;
-  font-size: 0.95rem;
-  font-weight: 600;
-  color: #002c5f;
-  line-height: 1.4;
-  display: -webkit-box;
-  line-clamp: 3;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  height: auto;
-  min-height: 2.8em;
-}
-
-.car-info p {
-  margin: 0.4rem 0;
-  font-size: 0.85rem;
-  color: #666;
-  display: flex;
-  justify-content: space-between;
-}
-
-.car-info .price {
-  margin-top: 0.8rem;
-  padding-top: 0.8rem;
-  border-top: 1px solid #eee;
-  font-size: 1rem;
-  color: #002c5f;
-  font-weight: 600;
-}
-
-.car-info .label {
-  color: #888;
-  font-weight: normal;
-}
-
 .loading-container {
   position: fixed;
   top: 0;
@@ -288,47 +219,6 @@
   50% {
     transform: translateY(-10px);
   }
-}
-
-.price-info {
-  margin-top: 0.8rem;
-  padding-top: 0.8rem;
-  border-top: 1px solid #eee;
-}
-
-.original-price {
-  color: #666;
-  text-decoration: line-through;
-  font-size: 0.85rem;
-}
-
-.savings {
-  color: #e63312;
-  font-size: 0.85rem;
-}
-
-.savings-amount {
-  font-weight: 600;
-}
-
-.final-price {
-  margin-top: 0.4rem;
-  color: #002c5f;
-  font-size: 1.1rem;
-  font-weight: 700;
-  padding: 0.3rem 0;
-  border-radius: 4px;
-}
-
-.final-price .label {
-  color: #002c5f;
-  font-weight: 500;
-}
-
-.final-price span:last-child {
-  color: #002c5f;
-  font-size: 1.2rem;
-  font-weight: 700;
 }
 
 .login-banner {

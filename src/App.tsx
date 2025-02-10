@@ -8,7 +8,7 @@ import HistoryIcon from '@mui/icons-material/History';
 import ChatbotPage from './pages/ChatbotPage';
 import HistoryPage from './pages/HistoryPage';
 import { createTheme } from '@mui/material/styles';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { ChatServiceProvider } from './contexts/ChatServiceContext';
 import { newChatService } from './services/newChatService';
 import { DashboardLayout } from '@toolpad/core/DashboardLayout';
@@ -19,7 +19,7 @@ const theme = createTheme({
   cssVariables: {
     colorSchemeSelector: 'data-toolpad-color-scheme',
   },
-  colorSchemes: { light: true, dark: true },
+  colorSchemes: { light: true },
 });
 
 interface NavigationItem {
@@ -122,7 +122,7 @@ const AppContent = () => {
     }
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (user) {
       setSession({
         user: {
@@ -133,7 +133,7 @@ const AppContent = () => {
     }
   }, [user]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     const loadConversationHistory = async () => {
       try {
         const conversations = await newChatService.getConversationList();
@@ -158,6 +158,51 @@ const AppContent = () => {
       loadConversationHistory();
     }
   }, [isAuthenticated, navigate, location.pathname]);
+
+  // 페이지 이동 전 경고 처리
+  useEffect(() => {
+    const handleBeforeNavigate = async (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      const closestLink = target.closest('a');
+      
+      if (closestLink) {
+        const href = closestLink.getAttribute('href');
+        // 현재 채팅방에서 홈화면(/) 또는 새로운 채팅(/chatbot)으로 이동하려는 경우
+        if (
+          !isAuthenticated && 
+          (href === '/' || href === '/chatbot') && 
+          location.pathname.startsWith('/history/') &&
+          sessionStorage.getItem('chatMessages')
+        ) {
+          e.preventDefault();
+          e.stopPropagation();
+          
+          const confirmLeave = window.confirm('현재 대화 내용이 저장되지 않습니다. 새로운 대화를 시작하시겠습니까?');
+          if (confirmLeave) {
+            sessionStorage.removeItem('chatMessages');
+            sessionStorage.removeItem('currentConversationId');
+            // 네비게이션에서 현재 대화 탭 제거
+            setNavigation(prev => {
+              const newNav = [...prev];
+              const historyItem = newNav.find(item => item.segment === 'history');
+              if (historyItem && historyItem.children) {
+                historyItem.children = [];
+              }
+              return newNav;
+            });
+            navigate('/chatbot');
+          }
+        }
+      }
+    };
+
+    const cleanup = () => {
+      document.removeEventListener('click', handleBeforeNavigate, true);
+    };
+
+    document.addEventListener('click', handleBeforeNavigate, true);
+    return cleanup;
+  }, [isAuthenticated, location.pathname, navigate]);
 
   return (
     <AppProvider
