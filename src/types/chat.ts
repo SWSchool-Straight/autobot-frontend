@@ -36,6 +36,7 @@ export interface CarInfo {
   newCarPrice: string;
   totalPurchaseAmount: string;
   savingsAmount: string;
+  exteriorColor: string;
 }
 
 export interface BedrockResponse {

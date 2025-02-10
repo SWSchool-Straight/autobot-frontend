@@ -19,6 +19,12 @@ const CarCard = ({ car, onCardClick }: CarCardProps) => {
       <img src={car.imageUrl} alt={car.vehicleName} />
       <div className="car-info">
         <h3>{car.vehicleName}</h3>
+        {car.exteriorColor && (
+          <p>
+            <span className="label">외부 색상</span>
+            <span>{car.exteriorColor}</span>
+          </p>
+        )}
         {car.interiorColor && (
           <p>
             <span className="label">내부 색상</span>
