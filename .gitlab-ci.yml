@@ -36,3 +36,12 @@ deploy-to-s3:
     - build
   only:
     - main
+
+purge:
+  image: python:latest
+  stage: deploy
+  script:
+    - pip install awscli
+    - aws cloudfront create-invalidation --distribution-id $PROD_CLOUDFRONT_DIST --paths "/*"
+  only:
+    - main
