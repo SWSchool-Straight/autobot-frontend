@@ -23,7 +23,7 @@ export default function WelcomeChat({ onStartChat }: WelcomeChatProps) {
     <>
       <div className="welcome-screen">
         <img src={BotIcon} alt="Bot" className="welcome-bot-avatar" />
-        <h1>중고차 챗봇 도우미입니다</h1>
+        <h1>CI CD 테스트입니다!! 성공!</h1>
         <div className="welcome-examples">
           <p>다음과 같은 것들을 물어보실 수 있습니다:</p>
           <div className="example-queries">
