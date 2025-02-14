@@ -2,8 +2,7 @@ import axios from "axios";
 import { LoginRequest } from "../types/login";
 import { loginApi, logoutApi } from "../api/loginApi";
 import { authApiClient } from "../api/apiClient";
-import { useAuth, User } from '../contexts/AuthContext'; // AuthContext에서 useAuth 가져오기
-import { Warning } from "@mui/icons-material";
+import { User } from "../contexts/AuthContext";
 
 // 현재 액세스 토큰을 저장할 변수
 let accessToken: string | null = null;

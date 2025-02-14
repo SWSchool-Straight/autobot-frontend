@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { createContext, useContext, useState, useEffect } from 'react';
-import { setAccessToken, clearAccessToken, getAccessToken, getCurrentEmail, handleLogout, clearCurrentEmail } from '../services/loginService';
+import { setAccessToken, getAccessToken, getCurrentEmail } from '../services/loginService';
 
 export interface User {
   email: string;

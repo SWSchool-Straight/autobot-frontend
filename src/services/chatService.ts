@@ -1,5 +1,5 @@
 import { chatApi } from '../api/chatApi';
-import { ChatMessage, BotMessage, UserMessage, BotChatMessage, Conversation } from '../types/chat';
+import { ChatMessage, BotMessage, UserMessage, BotChatMessage } from '../types/chat';
 
 
 export const chatService = {
