@@ -34,7 +34,6 @@ deploy-to-s3:
   tags:
     - frontend-runner
   image: amazon/aws-cli:latest
-  entrypoint: [""]
   script:
     - aws s3 sync dist/ s3://$S3_BUCKET_NAME --delete
   dependencies:
@@ -46,7 +45,6 @@ purge:
   stage: deploy
   needs: [deploy-to-s3]
   image: amazon/aws-cli:latest
-  entrypoint: [""]
   tags:
     - frontend-runner
   script:
