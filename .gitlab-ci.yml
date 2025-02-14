@@ -5,34 +5,37 @@ stages:
   - deploy
 
 cache:
-  key: yarn-cache
   paths:
-    - .yarn/cache
     - node_modules/
+    - yarn.lock
+  key:
+    files:
+      - yarn.lock
 
 build:
   stage: build
   tags:
     - frontend-runner
-  before_script:
+  script:
     - echo "VITE_CHAT_BASE_URL=${VITE_CHAT_BASE_URL}" >> .env
     - echo "VITE_AUTH_BASE_URL=${VITE_AUTH_BASE_URL}" >> .env
-  script:
     - yarn install --frozen-lockfile
-    - yarn build --minify=esbuild
+    - yarn build
   artifacts:
     paths:
       - dist/
-    expire_in: 30m
+    expire_in: 1 hour
   only:
     - main
 
 deploy-to-s3:
   stage: deploy
+  needs: [build]
   tags:
     - frontend-runner
-  image: amazon/aws-cli
+  image: python:latest
   script:
+    - pip install awscli
     - aws s3 sync dist/ s3://$S3_BUCKET_NAME --delete
   dependencies:
     - build
@@ -40,11 +43,13 @@ deploy-to-s3:
     - main
 
 purge:
-  image: amazon/aws-cli
   stage: deploy
+  needs: [deploy-to-s3]
+  image: python:latest
   tags:
     - frontend-runner
   script:
+    - pip install awscli
     - aws cloudfront create-invalidation --distribution-id $PROD_CLOUDFRONT_DIST --paths "/*"
   only:
     - main
