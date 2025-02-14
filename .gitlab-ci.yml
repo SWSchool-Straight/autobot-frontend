@@ -33,9 +33,9 @@ deploy-to-s3:
   needs: [build]
   tags:
     - frontend-runner
-  image: python:latest
+  image: amazon/aws-cli:latest
+  entrypoint: [""]
   script:
-    - pip install awscli
     - aws s3 sync dist/ s3://$S3_BUCKET_NAME --delete
   dependencies:
     - build
@@ -45,11 +45,11 @@ deploy-to-s3:
 purge:
   stage: deploy
   needs: [deploy-to-s3]
-  image: python:latest
+  image: amazon/aws-cli:latest
+  entrypoint: [""]
   tags:
     - frontend-runner
   script:
-    - pip install awscli
     - aws cloudfront create-invalidation --distribution-id $PROD_CLOUDFRONT_DIST --paths "/*"
   only:
     - main
