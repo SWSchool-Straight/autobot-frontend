@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { useNavigate } from 'react-router-dom';
 import BotIcon from '../assets/bot_icon.svg';
 
 interface WelcomeChatProps {
@@ -28,14 +27,14 @@ export default function WelcomeChat({ onStartChat }: WelcomeChatProps) {
         <div className="welcome-examples">
           <p>다음과 같은 것들을 물어보실 수 있습니다:</p>
           <div className="example-queries">
-            <button onClick={() => handleExampleClick("최근 6개월 내 등록된 그랜저 매물 찾아줘")}>
-              최근 6개월 내 등록된 그랜저 매물 찾아줘
+            <button onClick={() => handleExampleClick("2천만원 이하의 중고차를 찾아줘")}>
+              2천만원 이하의 중고차를 찾아줘
             </button>
-            <button onClick={() => handleExampleClick("주행거리 3만km 이하인 투싼 추천해줘")}>
-              주행거리 3만km 이하인 투싼 추천해줘
+            <button onClick={() => handleExampleClick("4인 가족 캠핑을 위한 중고차 찾아줘")}>
+              4인 가족 캠핑을 위한 중고차 찾아줘
             </button>
-            <button onClick={() => handleExampleClick("4천만원 이하 신차급 SUV 추천해줘")}>
-              4천만원 이하 신차급 SUV 추천해줘
+            <button onClick={() => handleExampleClick("스마트크루즈 컨트롤 옵션이 뭐야?")}>
+              스마트크루즈 컨트롤 옵션이 뭐야?
             </button>
           </div>
         </div>
