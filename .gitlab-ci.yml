@@ -33,7 +33,9 @@ deploy-to-s3:
   needs: [build]
   tags:
     - frontend-runner
-  image: amazon/aws-cli:latest
+  image: python:3.9-alpine
+  before_script:
+    - pip install awscli
   script:
     - aws s3 sync dist/ s3://$S3_BUCKET_NAME --delete
   dependencies:
@@ -44,7 +46,9 @@ deploy-to-s3:
 purge:
   stage: deploy
   needs: [deploy-to-s3]
-  image: amazon/aws-cli:latest
+  image: python:3.9-alpine
+  before_script:
+    - pip install awscli
   tags:
     - frontend-runner
   script:
