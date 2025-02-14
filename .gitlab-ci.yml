@@ -40,6 +40,8 @@ deploy-to-s3:
 purge:
   image: python:latest
   stage: deploy
+  tags:
+    - frontend-runner
   script:
     - pip install awscli
     - aws cloudfront create-invalidation --distribution-id $PROD_CLOUDFRONT_DIST --paths "/*"
