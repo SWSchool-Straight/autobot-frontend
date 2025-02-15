@@ -17,8 +17,8 @@ build:
   tags:
     - frontend-runner
   script:
-    - echo "VITE_CHAT_BASE_URL=${VITE_CHAT_BASE_URL}" >> .env
-    - echo "VITE_AUTH_BASE_URL=${VITE_AUTH_BASE_URL}" >> .env
+    - echo "VITE_CHAT_BASE_URL=${VITE_CHAT_BASE_URL_DEV}" >> .env
+    - echo "VITE_AUTH_BASE_URL=${VITE_AUTH_BASE_URL_DEV}" >> .env
     - yarn install --frozen-lockfile
     - yarn build
   artifacts:
@@ -26,11 +26,10 @@ build:
       - dist/
     expire_in: 1 hour
   only:
-    - main
+    - dev
 
 deploy-to-s3:
   stage: deploy
-  needs: [build]
   tags:
     - frontend-runner
   image: python:3.9-alpine
@@ -41,7 +40,7 @@ deploy-to-s3:
   dependencies:
     - build
   only:
-    - main
+    - dev
 
 purge:
   stage: deploy
