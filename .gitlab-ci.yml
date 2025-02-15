@@ -41,16 +41,3 @@ deploy-to-s3:
     - build
   only:
     - dev
-
-purge:
-  stage: deploy
-  needs: [deploy-to-s3]
-  image: python:3.9-alpine
-  before_script:
-    - pip install awscli
-  tags:
-    - frontend-runner
-  script:
-    - aws cloudfront create-invalidation --distribution-id $PROD_CLOUDFRONT_DIST --paths "/*"
-  only:
-    - dev
