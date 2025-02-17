@@ -11,14 +11,27 @@ cache:
   key:
     files:
       - yarn.lock
+    # 환경 변수가 변경될 때마다 새로운 캐시 키가 생성되도록 합니다
+    prefix: ${CI_COMMIT_REF_SLUG}-${VITE_CHAT_BASE_URL_DEV}-${VITE_AUTH_BASE_URL_DEV}
 
 build:
   stage: build
   tags:
     - frontend-runner
   script:
+    # 환경 변수 설정 전에 값 확인
+    - echo "환경 변수 확인:"
+    - echo "VITE_CHAT_BASE_URL_DEV = ${VITE_CHAT_BASE_URL_DEV}"
+    - echo "VITE_AUTH_BASE_URL_DEV = ${VITE_AUTH_BASE_URL_DEV}"
+    
+    # 환경 변수 설정
     - echo "VITE_CHAT_BASE_URL=${VITE_CHAT_BASE_URL_DEV}" >> .env
     - echo "VITE_AUTH_BASE_URL=${VITE_AUTH_BASE_URL_DEV}" >> .env
+    
+    # .env 파일 내용 확인
+    - echo "생성된 .env 파일 내용:"
+    - cat .env
+
     - yarn install --frozen-lockfile
     - yarn build
   artifacts:
