@@ -7,44 +7,51 @@ stages:
 cache:
   paths:
     - node_modules/
+    - yarn.lock
+  key:
+    files:
+      - yarn.lock
 
 build:
   stage: build
   tags:
     - frontend-runner
   script:
-    # 환경 변수 설정 전에 값 확인
-    - echo "환경 변수 확인:"
-    - echo "VITE_CHAT_BASE_URL_DEV = ${VITE_CHAT_BASE_URL_DEV}"
-    - echo "VITE_AUTH_BASE_URL_DEV = ${VITE_AUTH_BASE_URL_DEV}"
-    
-    # 환경 변수 설정
-    - echo "VITE_CHAT_BASE_URL=${VITE_CHAT_BASE_URL_DEV}" >> .env
-    - echo "VITE_AUTH_BASE_URL=${VITE_AUTH_BASE_URL_DEV}" >> .env
-    
-    # .env 파일 내용 확인
-    - echo "생성된 .env 파일 내용:"
-    - cat .env
-
-    - yarn install
+    - echo "VITE_CHAT_BASE_URL=${VITE_CHAT_BASE_URL}" >> .env
+    - echo "VITE_AUTH_BASE_URL=${VITE_AUTH_BASE_URL}" >> .env
+    - yarn install --frozen-lockfile
     - yarn build
   artifacts:
     paths:
       - dist/
     expire_in: 1 hour
   only:
-    - dev
+    - main
 
 deploy-to-s3:
   stage: deploy
+  needs: [build]
   tags:
     - frontend-runner
   image: python:3.9-alpine
   before_script:
     - pip install awscli
   script:
-    - aws s3 sync dist/ s3://$S3_BUCKET_NAME_DEV --delete
+    - aws s3 sync dist/ s3://$S3_BUCKET_NAME --delete
   dependencies:
     - build
   only:
-    - dev
+    - main
+
+purge:
+  stage: deploy
+  needs: [deploy-to-s3]
+  image: python:3.9-alpine
+  before_script:
+    - pip install awscli
+  tags:
+    - frontend-runner
+  script:
+    - aws cloudfront create-invalidation --distribution-id $PROD_CLOUDFRONT_DIST --paths "/*"
+  only:
+    - main
