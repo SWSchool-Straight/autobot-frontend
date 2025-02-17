@@ -26,6 +26,7 @@ build:
     - echo "생성된 .env 파일 내용:"
     - cat .env
 
+    - yarn install
     - yarn build
   artifacts:
     paths:
