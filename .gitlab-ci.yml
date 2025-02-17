@@ -36,7 +36,7 @@ deploy-to-s3:
   before_script:
     - pip install awscli
   script:
-    - aws s3 sync dist/ s3://$S3_BUCKET_NAME --delete
+    - aws s3 sync dist/ s3://$S3_BUCKET_NAME_DEV --delete
   dependencies:
     - build
   only:
