@@ -17,8 +17,8 @@ build:
   tags:
     - frontend-runner
   script:
-    - echo "VITE_CHAT_BASE_URL=${VITE_CHAT_BASE_URL}" >> .env
-    - echo "VITE_AUTH_BASE_URL=${VITE_AUTH_BASE_URL}" >> .env
+    - echo "VITE_CHAT_BASE_URL=${CHAT_BASE_URL_PROD}" >> .env
+    - echo "VITE_AUTH_BASE_URL=${AUTH_BASE_URL_PROD}" >> .env
     - yarn install --frozen-lockfile
     - yarn build
   artifacts:
