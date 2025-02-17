@@ -4,7 +4,9 @@ stages:
   - build
   - deploy
 
-cache: []
+cache:
+  paths:
+    - node_modules/
 
 build:
   stage: build
