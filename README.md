@@ -1,6 +1,8 @@
 # 🚗 오토봇 (AUTOBOT)
 
-중고차 통합 검색 챗봇 서비스
+중고차 통합 검색 챗봇 서비스, 오토봇의 프론트엔드 웹 페이지입니다.
+
+<br/>
 
 ## 📝 프로젝트 소개
 
@@ -14,6 +16,8 @@
 - 💰 시세 비교 기능 (특가/할인가/적정가/고가/프리미엄)
 - 👤 회원 관리 시스템
 - 📜 로그인 사용자 대화 기록 저장
+
+<br/>
 
 ## 🛠 기술 스택
 
@@ -29,42 +33,51 @@
 - GitLab CI/CD
 - Docker
 
+<br/>
+
+
 ## 🏗 프로젝트 구조
 
+```
 src/
-├── api/ # API 클라이언트 및 통신 관련
-├── assets/ # 이미지, 아이콘 등 정적 파일
+├── api/        # API 클라이언트 및 통신 관련
+├── assets/     # 이미지, 아이콘 등 정적 파일
 ├── components/ # 재사용 가능한 컴포넌트
-├── contexts/ # React Context
-├── pages/ # 페이지 컴포넌트
-├── services/ # 비즈니스 로직
-├── styles/ # CSS 스타일
-├── types/ # TypeScript 타입 정의
-└── utils/ # 유틸리티 함수
+├── contexts/   # React Context
+├── pages/      # 페이지 컴포넌트
+├── services/   # 비즈니스 로직
+├── styles/     # CSS 스타일
+├── types/      # TypeScript 타입 정의
+└── utils/      # 유틸리티 함수
+```
+
+<br/>
 
 
 ## 🚀 시작하기
 
-1. 저장소 클론
+### 1. 저장소 클론
 ```bash
 git clone [repository-url]
 ```
 
-2. 의존성 설치
+### 2. 의존성 설치
 ```bash
 yarn install
 ```
 
-3. 환경 변수 설정
+### 3. 환경 변수 설정
 ```bash
 VITE_CHAT_BASE_URL=your_chat_api_url
 VITE_AUTH_BASE_URL=your_auth_api_url
 ```
 
-4. 개발 서버 실행
+### 4. 개발 서버 실행
 ```bash
 yarn dev
 ```
+
+<br/>
 
 ## 🔒 보안 및 인증
 
@@ -72,6 +85,8 @@ yarn dev
 - Access Token & Refresh Token 활용
 - 로그인/로그아웃 상태 관리
 - 인증된 사용자 대화 기록 저장
+
+<br/>
 
 ## 🤝 기여하기
 
@@ -81,6 +96,11 @@ yarn dev
 4. Push to the Branch (`git push origin feature/AmazingFeature`)
 5. Open a Pull Request
 
+<br/>
+
 ## 📝 라이선스
 
-이 프로젝트는 [라이선스 이름] 라이선스 하에 배포됩니다. 자세한 내용은 `LICENSE` 파일을 참조하세요.
+이 프로젝트는 MIT 라이선스 하에 배포됩니다. 자세한 내용은 `LICENSE` 파일을 참조하세요.
+
+<br/>
+
