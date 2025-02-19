@@ -8,6 +8,7 @@ import BotIcon from '../assets/bot_icon.svg';
 import LoadingSpinner from '../components/LoadingSpinner';
 import { useAuth } from '../contexts/AuthContext';
 import CarCard from '../components/CarCard';
+import { ApiError, createErrorChatMessage } from '../utils/errorHandler';
 
 const ChatbotPage: React.FC = () => {
   const { isAuthenticated } = useAuth();
@@ -184,8 +185,16 @@ const ChatbotPage: React.FC = () => {
       const botMessages = chatService.createBotMessages(chatResponse, isAuthenticated);
       setMessages(prev => [...prev, ...botMessages]);
     } catch (error) {
-      const errorMessage = chatService.createErrorMessage(conversationId || '');
-      setMessages(prev => [...prev, errorMessage]);
+      if (error instanceof ApiError) {
+        const errorMessage = createErrorChatMessage(error, conversationId || '');
+        setMessages(prev => [...prev, errorMessage]);
+        
+        if (error.shouldRedirect && error.redirectPath) {
+          setTimeout(() => {
+            navigate(error.redirectPath as string);
+          }, 3000);
+        }
+      }
     } finally {
       setIsLoading(false); // 로딩 완료
     }

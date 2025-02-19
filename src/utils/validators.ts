@@ -1,4 +1,4 @@
-import { RegisterRequest } from "../api/registerApi";
+import { RegisterRequest } from "../types/register";
 
 export const formatBirthDate = (birthDate: string): string => {
     if (/^\d{6}$/.test(birthDate)) {

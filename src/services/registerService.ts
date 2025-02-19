@@ -2,7 +2,7 @@ import axios from "axios";
 import { registerApi } from "../api/registerApi";
 import { validateRegisterData } from "../utils/validators";
 import type { RegisterRequest, RegisterResponse } from "../types/register";
-import type { ApiResponse } from "../api/apiResponse";
+import type { ApiResponse } from "../types/apiResponse";
 
 // 회원가입 API 호출 함수
 export const register = async (requestData: RegisterRequest): Promise<ApiResponse<RegisterResponse>> => {

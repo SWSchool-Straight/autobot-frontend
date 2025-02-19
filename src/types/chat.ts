@@ -1,4 +1,4 @@
-export type Sender = 'USER' | 'BOT';
+export type Sender = 'USER' | 'BOT' | 'SYSTEM';
 
 // 기본 메시지 타입
 interface BaseMessage {
@@ -22,7 +22,13 @@ export interface BotChatMessage extends BaseMessage {
   goods?: CarInfo[];
 }
 
-export type ChatMessage = UserMessage | BotChatMessage;
+// 에러 메시지
+export interface SystemMessage extends BaseMessage {
+  sender: 'SYSTEM';
+  content: string;
+}
+
+export type ChatMessage = UserMessage | BotChatMessage | SystemMessage;
 
 export interface CarInfo {
   goodsNo: string;

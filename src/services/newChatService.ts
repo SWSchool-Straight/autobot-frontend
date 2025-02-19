@@ -1,4 +1,5 @@
 import { chatApi } from '../api/chatApi';
+import { Conversation } from '../types/chat';
 
 // 현재 대화 ID를 저장할 변수
 let currentConversationId: string | null = null;
@@ -35,7 +36,7 @@ export const newChatService = {
     },
 
     // 대화 목록 조회
-    async getConversationList(): Promise<Array<{ conversationId: string, title: string }>> {
+    async getConversationList(): Promise<Conversation[]> {
         try {
             const response = await chatApi.getConversations();
             
@@ -46,7 +47,7 @@ export const newChatService = {
                     )
                     .slice(0, 10);
             }
-            return response.info;
+            throw new Error('대화 목록 조회 실패');
         } catch (error) {
             console.error('대화 목록 조회 중 에러 발생:', error);
             throw error;

@@ -1,7 +1,8 @@
 import { AxiosResponse } from "axios";
 import { authApiClient } from "../api/apiClient";
-import { ApiResponse } from './apiResponse';
+import { ApiResponse } from '../types/apiResponse';
 import { LoginRequest, LoginResponse } from '../types/login';
+import { handleApiError } from '../utils/errorHandler';
 
 // 로그인 API 호출 함수
 export const loginApi = (data: LoginRequest): Promise<AxiosResponse<ApiResponse<LoginResponse>>> => {
@@ -9,6 +10,11 @@ export const loginApi = (data: LoginRequest): Promise<AxiosResponse<ApiResponse<
 };
 
 // 로그아웃 API 호출 함수
-export const logoutApi = (email: string): Promise<AxiosResponse<ApiResponse>> => {
-    return authApiClient.post('/api/members/logout', { email });
+export const logoutApi = async (email: string): Promise<ApiResponse> => {
+    try {
+        const response = await authApiClient.post('/api/members/logout', { email });
+        return response.data;
+    } catch (error) {
+        throw handleApiError(error);
+    }
 };
