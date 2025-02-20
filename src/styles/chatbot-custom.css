@@ -303,3 +303,38 @@
 .user-message .message-time {
   align-self: flex-end;
 }
+
+.message[data-is-system="true"] {
+  align-self: center;
+  max-width: 100%;
+  margin: 1rem 0;
+  padding: 0 20px;
+  width: 100%;
+}
+
+.message[data-is-system="true"] .message-content {
+  background-color: #fff3cd;
+  color: #856404;
+  border: 1px solid #ffeeba;
+  padding: 12px 20px;
+  text-align: center;
+  border-radius: 8px;
+  font-size: 14px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.message[data-is-system="true"] .message-content::before,
+.message[data-is-system="true"] .bot-avatar {
+  display: none;
+}
+
+.message[data-is-system="true"] .message-time {
+  display: none;
+}
+
+.message[data-is-system="true"] .message-wrapper {
+  width: 100%;
+}

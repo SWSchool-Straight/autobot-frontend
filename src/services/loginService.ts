@@ -46,34 +46,38 @@ export const clearCurrentEmail = () => {
 }
 
 // 로그인 처리 함수
-export const handleLogin = async (data: LoginRequest, login: (userData: User, token: string) => void) => {
-    try {
-        const response = await loginApi(data);
-        const authHeader = response?.headers['authorization'];
-        
-        if (!authHeader) {
-            throw new ApiError('인증 정보가 올바르지 않습니다.');
-        }
-
-        const accessToken = authHeader.replace('Bearer ', '');
-        const email = data.email;
-
-        setAccessToken(accessToken); // 액세스 토큰 저장
-        
-        if (email) {
-            setCurrentEmail(email); // 이메일 저장
-            login({ 
-                email: email, 
-                name: email.split('@')[0] 
-            }, accessToken);
-        } else {
-            throw new ApiError('이메일 정보가 없습니다.');
-        }
-
-    } catch (error) {
-        console.error('로그인 처리 중 에러 발생:', error); // 에러 로그 추가
-        handleLoginError(error);
+export const handleLogin = async (
+  loginData: LoginRequest,
+  login: (userData: User, token: string) => void
+): Promise<void> => {
+  try {
+    const response = await loginApi(loginData);
+    
+    if (!response?.data?.info) {
+      throw new Error('로그인 응답 데이터가 올바르지 않습니다.');
     }
+
+    const authHeader = response.headers['authorization'];
+    if (!authHeader) {
+      throw new Error('인증 토큰이 없습니다.');
+    }
+
+    const token = authHeader.replace('Bearer ', '');
+    const userData = {
+      email: loginData.email,
+      name: loginData.email.split('@')[0]
+    };
+
+    setAccessToken(token);
+    setCurrentEmail(loginData.email);
+    login(userData, token);
+  } catch (error) {
+    console.error('로그인 처리 중 에러 발생:', error);
+    if (error instanceof Error) {
+      throw new Error(error.message);
+    }
+    throw new Error('로그인 중 알 수 없는 오류가 발생했습니다.');
+  }
 };
 
 // 로그인 제출 처리 함수
