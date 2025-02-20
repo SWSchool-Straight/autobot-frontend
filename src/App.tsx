@@ -111,7 +111,7 @@ const AppContent = () => {
     });
   };
 
-  const MAX_TITLE_LENGTH = 22;
+  const MAX_TITLE_LENGTH = 20;
 
   // 제목 자르기 함수 추가
   const truncateTitle = (title: string) => {

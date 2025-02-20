@@ -1,7 +1,7 @@
 import { chatApi } from '../api/chatApi';
-import { ChatMessage, BotMessage, UserMessage, BotChatMessage, SystemMessage } from '../types/chat';
+import { BotMessage, ChatMessage, UserMessage, SystemMessage } from '../types/message';
+import { BotApiResponse, CarInfo } from '../types/chat';
 import { ApiError } from '../utils/errorHandler';
-
 
 export const chatService = {
 
@@ -16,57 +16,65 @@ export const chatService = {
     return '메시지를 표시할 수 없습니다.';
   },
 
-
-  createBotMessages(response: BotMessage, isAuthenticated: boolean): BotChatMessage[] {
+  createBotMessages(response: BotApiResponse, isAuthenticated: boolean): BotMessage[] {
     try {
-      const messages: BotChatMessage[] = [];
+      const messages: BotMessage[] = [];
       const now = new Date().toISOString();
-      
-      const bedrockResponse = response.bedrockResponse;
-      if (!bedrockResponse) {
-        // bedrockResponse가 없는 경우 오류 메시지 반환
+
+      // bedrockResponse가 없거나 query가 없는 경우 에러 처리
+      if (!response?.bedrockResponse) {
         return [this.createErrorMessage(response.conversationId, '죄송합니다. 일시적인 오류가 발생했습니다.')];
       }
-      
-      if (bedrockResponse.goods?.length > 0) {
-        messages.push({
-          messageId: Date.now(),
-          conversationId: response.conversationId,
-          content: bedrockResponse.query,
-          sender: 'BOT',
-          sentAt: now,
-          goods: bedrockResponse.goods
-        });
-      } else {
-        messages.push({
-          messageId: Date.now(),
-          conversationId: response.conversationId,
-          content: bedrockResponse.query,
-          sender: 'BOT',
-          sentAt: now
-        });
+
+      const { bedrockResponse } = response;
+
+      // 응답이 문자열인 경우
+      if (typeof bedrockResponse === 'string') {
+        messages.push(this.createBotMessage(response.conversationId, bedrockResponse, now, []));
+      } 
+      // 응답이 객체인 경우
+      else if (typeof bedrockResponse === 'object') {
+        // query가 문자열인 경우
+        if (typeof bedrockResponse.query === 'string') {
+          messages.push(this.createBotMessage(
+            response.conversationId,
+            bedrockResponse.query,
+            now,
+            bedrockResponse.goods || []
+          ));
+        } 
+        // query가 객체인 경우 (이전 응답 형식 호환)
+        else if (bedrockResponse.query && typeof bedrockResponse.query === 'object') {
+          messages.push(this.createBotMessage(
+            response.conversationId,
+            bedrockResponse.query,
+            now,
+            bedrockResponse.goods || []
+          ));
+        } 
+        else {
+          return [this.createErrorMessage(response.conversationId, '죄송합니다. 응답 형식에 문제가 있습니다.')];
+        }
       }
 
+      // 비로그인 사용자에게 안내 메시지 추가
       if (!isAuthenticated) {
-        const systemMessage = this.createSystemMessage(
+        messages.push(this.createSystemMessage(
           response.conversationId,
-          '💡 지금 로그인하시면 채팅 기록이 저장됩니다. 로그아웃하거나 새로고침하면 대화 기록이 사라집니다.'
-        );
-        messages.push(systemMessage);
+          '💡 아직 회원이 아닌가요? 로그인하시고 대화 기록을 저장하세요!'
+        ));
       }
-      
+
       return messages;
 
     } catch (error) {
       console.error('createBotMessages 오류:', error);
-      // 오류 발생 시 오류 메시지 반환
       return [this.createErrorMessage(response.conversationId, '죄송합니다. 일시적인 오류가 발생했습니다.')];
     }
   },
 
   createUserMessage(content: string, conversationId: string): UserMessage {
     return {
-      messageId: Date.now(),
       conversationId,
       content,
       sender: 'USER',
@@ -74,9 +82,23 @@ export const chatService = {
     };
   },
 
+  createBotMessage(
+    conversationId: string, 
+    content: string, 
+    sentAt: string, 
+    goods: CarInfo[] = []
+  ): BotMessage {
+    return {
+      conversationId,
+      content: content || '응답을 표시할 수 없습니다.',
+      sender: 'BOT',
+      sentAt,
+      goods: Array.isArray(goods) ? goods : []
+    };
+  },
+
   createErrorMessage(conversationId: string, errorMessage: string): SystemMessage {
     return {
-      messageId: Date.now(),
       conversationId,
       content: errorMessage,
       sender: 'SYSTEM',
@@ -87,7 +109,6 @@ export const chatService = {
 
   createSystemMessage(conversationId: string, content: string): SystemMessage {
     return {
-      messageId: Date.now(),
       conversationId,
       content,
       sender: 'SYSTEM',
@@ -100,13 +121,15 @@ export const chatService = {
   async sendMessage(
     conversationId: string,
     content: string
-  ): Promise<BotMessage> {
+  ): Promise<BotApiResponse> {
     try {
       const response = await chatApi.sendMessage(conversationId, content);
+
       if (!response.info) {
         throw new ApiError('응답 데이터가 없습니다.');
       }
       return response.info;
+
     } catch (error) {
       if (error instanceof ApiError) {
         // 500 에러인 경우 특별한 메시지 처리
@@ -127,47 +150,61 @@ export const chatService = {
 
   // 대화 내용 조회
   async getChathistory(conversationId: string): Promise<ChatMessage[]> {
-    const response = await chatApi.getConversation(conversationId);
-    console.log('채팅 기록 응답:', response); // 디버깅용 로그 추가
-    
-    if (!response.info) {
-      throw new Error('응답 데이터가 없습니다.');
-    }
+    try {
+      const response = await chatApi.getConversation(conversationId);
+      console.log('채팅 기록 응답:', response); // 디버깅용 로그 추가
+      
+      if (!response.info) {
+        throw new Error('응답 데이터가 없습니다.');
+      }
 
-    return response.info.map((message: any): ChatMessage => {
-      const baseMessage = {
-        messageId: message.messageId,
-        conversationId: message.conversationId,
-        sender: message.sender,
-        sentAt: message.sentAt
-      };
+      return response.info.map((message: any): ChatMessage => {
+        const baseMessage = {
+          conversationId: message.conversationId,
+          sender: message.sender,
+          sentAt: message.sentAt
+        };
 
-      // USER 메시지인 경우
-      if (message.sender === 'USER') {
+        // USER 메시지 처리
+        if (message.sender === 'USER') {
+          return {
+            ...baseMessage,
+            content: String(message.content)
+          } as UserMessage;
+        }
+
+        // BOT 메시지 처리
+        if (message.sender === 'BOT') {
+          let content = '';
+          let goods: CarInfo[] = [];
+
+          // content가 객체인 경우
+          if (typeof message.content === 'object' && message.content !== null) {
+            content = message.content.query || '';
+            goods = Array.isArray(message.content.goods) ? message.content.goods : [];
+          } else {
+            content = String(message.content);
+          }
+
+          return {
+            ...baseMessage,
+            content,
+            sender: 'BOT',
+            goods
+          } as BotMessage;
+        }
+
+        // SYSTEM 메시지 처리
         return {
           ...baseMessage,
-          sender: 'USER',
-          content: `${message.content}`  // String() 대신 템플릿 리터럴 사용
-        } as UserMessage;
-      }
-
-      // BOT 메시지인 경우
-      const botMessage = {
-        ...baseMessage,
-        sender: 'BOT'
-      } as BotChatMessage;
-
-      // content가 객체인 경우 (차량 정보가 포함된 경우)
-      if (typeof message.content === 'object') {
-        botMessage.content = message.content.query;
-        if (message.content.goods) {
-          botMessage.goods = message.content.goods;
-        }
-      } else {
-        botMessage.content = message.content;
-      }
-
-      return botMessage;
-    });
+          content: String(message.content),
+          sender: 'SYSTEM',
+          isSystemMessage: true
+        } as SystemMessage;
+      });
+    } catch (error) {
+      console.error('getChathistory 오류:', error);
+      throw new ApiError('대화 기록을 불러오는 중 오류가 발생했습니다.');
+    }
   }
 }; 

@@ -1,6 +1,7 @@
 import { chatApiClient } from './apiClient';
 import { ApiResponse } from '../types/apiResponse';
-import { BotMessage, Conversation, ChatMessage } from '../types/chat';
+import { BotApiResponse, Conversation } from '../types/chat';
+import { BotMessage, ChatMessage } from '../types/message';
 import { handleApiError } from '../utils/errorHandler';
 
 export const chatApi = {
@@ -20,16 +21,13 @@ export const chatApi = {
   /**
    * 기존 대화에 메시지 추가
    */
-  async sendMessage(conversationId: string, content: string): Promise<ApiResponse<BotMessage>>  {
+  async sendMessage(conversationId: string, content: string): Promise<ApiResponse<BotApiResponse>>  {
     try {
       const response = await chatApiClient.post(`/api/conversations/${conversationId}/messages`, {
-        content: `${content}`,  // 또는 content.toString()
-        sender: 'USER'
+        content: `${content}`
       });
-      // console.log('메시지 전송 성공:', response.data);
       return response.data;
     } catch (error) {
-      // console.error('메시지 전송 실패:', error);
       throw handleApiError(error);
     }
   },
