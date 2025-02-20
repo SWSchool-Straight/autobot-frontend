@@ -1,5 +1,5 @@
 import { authApiClient } from "./apiClient";
-import { ApiResponse } from "./apiResponse";
+import { ApiResponse } from "../types/apiResponse";
 import type { RegisterRequest, RegisterResponse } from "../types/register";
 
 // 회원가입 API

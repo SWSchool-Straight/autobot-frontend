@@ -1,50 +1,67 @@
 import { chatApi } from '../api/chatApi';
-import { ChatMessage, BotMessage, UserMessage, BotChatMessage } from '../types/chat';
+import { ChatMessage, BotMessage, UserMessage, BotChatMessage, SystemMessage } from '../types/chat';
+import { ApiError } from '../utils/errorHandler';
 
 
 export const chatService = {
 
-  createBotMessages(response: BotMessage, isAuthenticated: boolean): BotChatMessage[] {
-    const messages: BotChatMessage[] = [];
-    const now = new Date().toISOString();
-    
-    const bedrockResponse = response.bedrockResponse;
-    if (!bedrockResponse) {
-      console.error('bedrockResponse가 없습니다.');
-      return messages;
+    // content 타입을 체크하는 헬퍼 함수 추가
+  getMessageContent(content: any): string {
+    if (typeof content === 'string') {
+      return content;
     }
-    
-    if (bedrockResponse.goods?.length > 0) {
-      messages.push({
-        messageId: Date.now(),
-        conversationId: response.conversationId,
-        content: bedrockResponse.query,
-        sender: 'BOT',
-        sentAt: now,
-        goods: bedrockResponse.goods
-      });
-    } else {
-      messages.push({
-        messageId: Date.now(),
-        conversationId: response.conversationId,
-        content: bedrockResponse.query,
-        sender: 'BOT',
-        sentAt: now
-      });
+    if (content && typeof content === 'object' && 'query' in content) {
+      return content.query;
     }
+    return '메시지를 표시할 수 없습니다.';
+  },
 
-    if (!isAuthenticated) {
-      messages.push({
-        messageId: Date.now() + 1,
-        conversationId: response.conversationId,
-        content: '💡 지금 로그인하시면 채팅 기록이 저장됩니다. 로그아웃하거나 새로고침하면 대화 기록이 사라집니다.',
-        sender: 'BOT',
-        sentAt: now,
-        isSystemMessage: true
-      });
+
+  createBotMessages(response: BotMessage, isAuthenticated: boolean): BotChatMessage[] {
+    try {
+      const messages: BotChatMessage[] = [];
+      const now = new Date().toISOString();
+      
+      const bedrockResponse = response.bedrockResponse;
+      if (!bedrockResponse) {
+        // bedrockResponse가 없는 경우 오류 메시지 반환
+        return [this.createErrorMessage(response.conversationId, '죄송합니다. 일시적인 오류가 발생했습니다.')];
+      }
+      
+      if (bedrockResponse.goods?.length > 0) {
+        messages.push({
+          messageId: Date.now(),
+          conversationId: response.conversationId,
+          content: bedrockResponse.query,
+          sender: 'BOT',
+          sentAt: now,
+          goods: bedrockResponse.goods
+        });
+      } else {
+        messages.push({
+          messageId: Date.now(),
+          conversationId: response.conversationId,
+          content: bedrockResponse.query,
+          sender: 'BOT',
+          sentAt: now
+        });
+      }
+
+      if (!isAuthenticated) {
+        const systemMessage = this.createSystemMessage(
+          response.conversationId,
+          '💡 지금 로그인하시면 채팅 기록이 저장됩니다. 로그아웃하거나 새로고침하면 대화 기록이 사라집니다.'
+        );
+        messages.push(systemMessage);
+      }
+      
+      return messages;
+
+    } catch (error) {
+      console.error('createBotMessages 오류:', error);
+      // 오류 발생 시 오류 메시지 반환
+      return [this.createErrorMessage(response.conversationId, '죄송합니다. 일시적인 오류가 발생했습니다.')];
     }
-    
-    return messages;
   },
 
   createUserMessage(content: string, conversationId: string): UserMessage {
@@ -57,13 +74,25 @@ export const chatService = {
     };
   },
 
-  createErrorMessage(conversationId: string): BotChatMessage {
+  createErrorMessage(conversationId: string, errorMessage: string): SystemMessage {
     return {
       messageId: Date.now(),
       conversationId,
-      content: '죄송합니다. 일시적인 오류가 발생했습니다.',
-      sender: 'BOT',
-      sentAt: new Date().toISOString()
+      content: errorMessage,
+      sender: 'SYSTEM',
+      sentAt: new Date().toISOString(),
+      isSystemMessage: true
+    };
+  },
+
+  createSystemMessage(conversationId: string, content: string): SystemMessage {
+    return {
+      messageId: Date.now(),
+      conversationId,
+      content,
+      sender: 'SYSTEM',
+      sentAt: new Date().toISOString(),
+      isSystemMessage: true
     };
   },
 
@@ -75,12 +104,24 @@ export const chatService = {
     try {
       const response = await chatApi.sendMessage(conversationId, content);
       if (!response.info) {
-        throw new Error('응답 데이터가 없습니다.');
+        throw new ApiError('응답 데이터가 없습니다.');
       }
       return response.info;
     } catch (error) {
-      console.error('메시지 전송 중 에러 발생:', error);
-      throw error;
+      if (error instanceof ApiError) {
+        // 500 에러인 경우 특별한 메시지 처리
+        if (error.status === 500) {
+          throw new ApiError(
+            '죄송합니다. 메시지 처리 중 오류가 발생했습니다.',
+            500,
+            false,
+            undefined,
+            true // 재시도 가능하도록 설정
+          );
+        }
+        throw error;
+      }
+      throw new ApiError('메시지 전송 중 오류가 발생했습니다.');
     }
   },
 
