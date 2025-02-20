@@ -9,9 +9,12 @@ export const chatApi = {
    * 새로운 대화 시작
    */
   async createConversation(content: string): Promise<ApiResponse<Conversation>> {
-    try{
+    try {
       console.log('대화 생성 시작:', { content });
       const response = await chatApiClient.post('/api/conversations', { content });
+      if (!response.data?.info?.conversationId) {
+        throw new Error('Invalid conversation creation response');
+      }
       return response.data;
     } catch (error) {
       throw handleApiError(error);

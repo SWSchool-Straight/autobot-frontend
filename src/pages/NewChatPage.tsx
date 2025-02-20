@@ -19,6 +19,9 @@ const NewChatPage: React.FC = () => {
       
       // 2. 네비게이션 업데이트 및 새 채팅방으로 이동
       addNewConversation(title, conversationId);
+
+      setIsLoading(false);
+      
       navigate(`/history/${conversationId}`, {
         state: { initialMessage: message }  // 첫 메시지만 전달
       });
