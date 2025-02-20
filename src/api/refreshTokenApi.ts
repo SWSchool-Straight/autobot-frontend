@@ -1,11 +1,14 @@
-import { AxiosResponse } from "axios";
 import { authApiClient } from "./apiClient";
-import { ApiResponse } from './apiResponse';
-
+import { ApiResponse } from '../types/apiResponse';
+import { handleApiError } from '../utils/errorHandler';
+import { AxiosResponse } from 'axios';
 export const refreshTokenApi = async (email: string): Promise<AxiosResponse<ApiResponse>> => {
-    const response = await authApiClient.post('/api/members/refresh', {
-        email
-    });
-    
-    return response;
+    try {
+        const response = await authApiClient.post('/api/members/refresh', {
+            email
+        });
+        return response.data;
+    } catch (error) {
+        throw handleApiError(error);
+    }
 }; 

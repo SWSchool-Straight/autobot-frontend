@@ -111,6 +111,15 @@ const AppContent = () => {
     });
   };
 
+  const MAX_TITLE_LENGTH = 20;
+
+  // 제목 자르기 함수 추가
+  const truncateTitle = (title: string) => {
+    return title.length > MAX_TITLE_LENGTH 
+      ? `${title.slice(0, MAX_TITLE_LENGTH)}...` 
+      : title;
+  };
+
   const chatServiceContextValue = {
     createTab: async (content: string) => {
       const result = await newChatService.createTab(content);
@@ -144,7 +153,7 @@ const AppContent = () => {
           if (historyItem) {
             historyItem.children = conversations.map(conv => ({
               segment: `${conv.conversationId}`,
-              title: conv.title
+              title: truncateTitle(conv.title)
             }));
           }
           return newNav;

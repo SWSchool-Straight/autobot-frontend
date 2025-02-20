@@ -3,8 +3,8 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { register } from "../services/registerService";
 import { formatBirthDate } from "../utils/validators";
-import { RegisterRequest } from "../api/registerApi";
 import "../styles/RegisterPage.css";
+import { RegisterRequest } from '../types/register';
 
 const RegisterPage: React.FC = () => {
     const [formData, setFormData] = useState({

@@ -2,12 +2,15 @@ import * as React from 'react';
 import { useState, useRef, useEffect } from 'react';
 import { useLocation, useParams, useNavigate, useBeforeUnload } from 'react-router-dom';
 import { chatService } from '../services/chatService';
-import { ChatMessage } from '../types/chat';
+import { ChatMessage } from '../types/message';
 import '../styles/chatbot-custom.css';
 import BotIcon from '../assets/bot_icon.svg';
 import LoadingSpinner from '../components/LoadingSpinner';
 import { useAuth } from '../contexts/AuthContext';
 import CarCard from '../components/CarCard';
+import { ApiError, createErrorChatMessage } from '../utils/errorHandler';
+import { format } from 'date-fns';
+
 
 const ChatbotPage: React.FC = () => {
   const { isAuthenticated } = useAuth();
@@ -46,37 +49,62 @@ const ChatbotPage: React.FC = () => {
       try {
         if (initialMessage.current) {
           const message = initialMessage.current;
-          const userMessage = chatService.createUserMessage(message, conversationId || '');
+          const userMessage = chatService.createUserMessage(message, conversationId);
           setMessages([userMessage]);
           
-          const response = await chatService.sendMessage(conversationId, message);
-          const botMessages = chatService.createBotMessages(response, isAuthenticated);
-          setMessages([userMessage, ...botMessages]);
+          try {
+            const response = await chatService.sendMessage(conversationId, message);
+            const botMessages = chatService.createBotMessages(response, isAuthenticated);
+            setMessages([userMessage, ...botMessages]);
+          } catch (error) {
+            // 에러 메시지 처리 수정
+            const errorMessage = chatService.createErrorMessage(
+              conversationId,
+              '죄송합니다. 메시지 전송 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.'
+            );
+            setMessages([userMessage, errorMessage]);
+          }
           
           initialMessage.current = null;
         } 
         else if (isAuthenticated) {
-          // 채팅 기록 로드
-          const response = await chatService.getChathistory(conversationId);
-          
-          // 채팅 기록이 비어있고 location.state에 initialMessage가 있다면
-          // (페이지 새로고침 등의 경우)
-          if (response.length === 0 && location.state?.initialMessage) {
-            const message = location.state.initialMessage;
-            const userMessage = chatService.createUserMessage(message, conversationId || '');
-            setMessages([userMessage]);
-            
-            const chatResponse = await chatService.sendMessage(conversationId, message);
-            const botMessages = chatService.createBotMessages(chatResponse, isAuthenticated);
-            setMessages([userMessage, ...botMessages]);
-          } else {
-            setMessages(response);
+          try {
+            const response = await chatService.getChathistory(conversationId);
+            if (response.length === 0) {
+              if (location.state?.initialMessage) {
+                const message = location.state.initialMessage;
+                const userMessage = chatService.createUserMessage(message, conversationId);
+                setMessages([userMessage]);
+                
+                const chatResponse = await chatService.sendMessage(conversationId, message);
+                const botMessages = chatService.createBotMessages(chatResponse, isAuthenticated);
+                setMessages([userMessage, ...botMessages]);
+              } else {
+                const errorMessage = chatService.createErrorMessage(
+                  conversationId,
+                  '채팅 기록이 없습니다.'
+                );
+                setMessages([errorMessage]);
+              }
+            } else {
+              setMessages(response);
+            }
+          } catch (error) {
+            console.error('채팅 초기화 중 오류 발생:', error);
+            const errorMessage = chatService.createErrorMessage(
+              conversationId,
+              '대화 기록을 불러올 수 없습니다. 잠시 후 다시 시도해 주세요.'
+            );
+            setMessages([errorMessage]);
           }
         }
         isInitialized.current = true;
       } catch (error) {
         console.error('채팅 초기화 중 오류 발생:', error);
-        const errorMessage = chatService.createErrorMessage(conversationId);
+        const errorMessage = chatService.createErrorMessage(
+          conversationId,
+          '채팅을 시작할 수 없습니다. 잠시 후 다시 시도해 주세요.'
+        );
         setMessages([errorMessage]);
       } finally {
         setIsLoading(false);
@@ -136,8 +164,7 @@ const ChatbotPage: React.FC = () => {
   useEffect(() => {
     if (!isAuthenticated) {
       return () => {
-        sessionStorage.removeItem('chatMessages');
-        sessionStorage.removeItem('currentConversationId');
+        sessionStorage.clear();
       };
     }
   }, [isAuthenticated]);
@@ -172,22 +199,52 @@ const ChatbotPage: React.FC = () => {
   // 메시지 전송 처리
   const handleSendMessage = async (e: React.FormEvent, message: string) => {
     e.preventDefault();
-    if (!message.trim() || isLoading) return; // 로딩 중이면 메시지 전송 불가
+    if (!message.trim() || isLoading) return;
 
-    const userMessage = chatService.createUserMessage(message, conversationId || '');
-    setMessages(prev => [...prev, userMessage]);
+    setIsLoading(true);
+    const trimmedMessage = message.trim();
     setInputMessage('');
-    setIsLoading(true); // 로딩 시작
 
     try {
-      const chatResponse = await chatService.sendMessage(conversationId || '', message);
+      // 사용자 메시지 생성 및 표시
+      const userMessage = chatService.createUserMessage(trimmedMessage, conversationId || '');
+      setMessages(prev => [...prev, userMessage]);
+
+      // 봇 응답 요청
+      const chatResponse = await chatService.sendMessage(conversationId || '', trimmedMessage);
+      
+      // 봇 메시지 생성
       const botMessages = chatService.createBotMessages(chatResponse, isAuthenticated);
-      setMessages(prev => [...prev, ...botMessages]);
+      
+      // 전체 메시지 업데이트 (사용자 메시지 유지)
+      setMessages(prev => {
+        const messagesWithoutLoading = prev.filter(msg => msg !== userMessage);
+        return [...messagesWithoutLoading, userMessage, ...botMessages];
+      });
+
     } catch (error) {
-      const errorMessage = chatService.createErrorMessage(conversationId || '');
+      console.error('메시지 전송 오류:', error);
+      
+      let errorMessage;
+      if (error instanceof ApiError && error.shouldRedirect) {
+        errorMessage = chatService.createErrorMessage(
+          conversationId || '',
+          '로그인이 필요한 서비스입니다.'
+        );
+        // 리다이렉트 처리
+        setTimeout(() => {
+          navigate('/login');
+        }, 3000);
+      } else {
+        errorMessage = chatService.createErrorMessage(
+          conversationId || '',
+          '메시지 전송 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.'
+        );
+      }
+
       setMessages(prev => [...prev, errorMessage]);
     } finally {
-      setIsLoading(false); // 로딩 완료
+      setIsLoading(false);
     }
   };
 
@@ -199,8 +256,11 @@ const ChatbotPage: React.FC = () => {
 
   const LoginBanner = () => (
     <div className="login-banner">
-      <p>로그인하시면 더 많은 대화를 나누실 수 있습니다.</p>
-      <a href="/login" className="login-button">로그인하기</a>
+      <p>게스트로 접속 시 로그아웃하거나 새로고침하면 대화 기록이 사라집니다. 로그인하시고 대화 기록을 저장하세요!</p>
+      <div className="buttons">
+        <a href="/login" className="login-button">로그인하기</a>
+        <a href="/signup" className="signup-button">회원가입하기</a>
+      </div>
     </div>
   );
 
@@ -209,14 +269,24 @@ const ChatbotPage: React.FC = () => {
       {!isAuthenticated && <LoginBanner />}
       {isPageLoading && <LoadingSpinner />}
       <div className="chatbot-messages">
-        {messages.map((message) => (
-          <React.Fragment key={message.messageId}>
-            <div className={`message ${message.sender === 'BOT' ? 'bot-message' : 'user-message'}`}>
-              {message.sender === 'BOT' && <img src={BotIcon} alt="Bot" className="bot-avatar" />}
-              <div className="message-content">
-                {typeof message.content === 'string' 
-                  ? message.content 
-                  : message.content.query}
+        {messages.map((message, index) => (
+          <React.Fragment key={`${message.conversationId}-${message.sentAt}-${index}`}>
+            <div 
+              className={`message ${message.sender === 'BOT' ? 'bot-message' : 'user-message'}`}
+              data-is-system={message.isSystemMessage}
+            >
+              {message.sender === 'BOT' && !message.isSystemMessage && 
+                <img src={BotIcon} alt="Bot" className="bot-avatar" />
+              }
+              <div className="message-wrapper">
+                <div className="message-content">
+                  {chatService.getMessageContent(message.content)}
+                </div>
+                {!message.isSystemMessage && (
+                  <div className="message-time">
+                    {format(new Date(message.sentAt), 'HH:mm')}
+                  </div>
+                )}
               </div>
             </div>
             {message.sender === 'BOT' && 

@@ -3,6 +3,7 @@ import { LoginRequest } from "../types/login";
 import { loginApi, logoutApi } from "../api/loginApi";
 import { authApiClient } from "../api/apiClient";
 import { User } from "../contexts/AuthContext";
+import { ApiError } from "../utils/errorHandler";
 
 // 현재 액세스 토큰을 저장할 변수
 let accessToken: string | null = null;
@@ -41,40 +42,38 @@ export const getCurrentEmail = (): string | null => {
 
 export const clearCurrentEmail = () => {
     currentEmail = null;
-    localStorage.removeItem('userEmail'); // 이메일이 null일 경우 로컬 스토리지에서 제거
+    localStorage.removeItem('userEmail'); 
 }
 
 // 로그인 처리 함수
-export const handleLogin = async (data: LoginRequest, login: (userData: User, token: string) => void) => {
-    try {
-        console.log('로그인 요청 데이터:', data);   
-        
-        const response = await loginApi(data);
-        const authHeader = response?.headers['authorization'];
-        
-        if (!authHeader) {
-            throw new Error('Authorization 헤더가 존재하지 않습니다.');
-        }
-
-        const accessToken = authHeader.replace('Bearer ', '');
-        const email = data.email;
-
-        setAccessToken(accessToken); // 액세스 토큰 저장
-        
-        if (email) {
-            setCurrentEmail(email); // 이메일 저장
-            login({ 
-                email: email, 
-                name: email.split('@')[0] 
-            }, accessToken);
-        } else {
-            console.error('이메일 없음');
-        }
-
-    } catch (error) {
-        console.error('로그인 처리 중 에러 발생:', error); // 에러 로그 추가
-        handleLoginError(error);
+export const handleLogin = async (
+  loginData: LoginRequest,
+  login: (userData: User, token: string) => void
+): Promise<void> => {
+  try {
+    const response = await loginApi(loginData);
+    
+    if (!response?.data?.info) {
+      throw new Error('로그인 응답 데이터가 올바르지 않습니다.');
     }
+
+    const authHeader = response.headers['authorization'];
+    if (!authHeader) {
+      throw new Error('인증 토큰이 없습니다.');
+    }
+
+    const token = authHeader.replace('Bearer ', '');
+    const userData = {
+      email: loginData.email,
+      name: loginData.email.split('@')[0]
+    };
+
+    setAccessToken(token);
+    setCurrentEmail(loginData.email);
+    login(userData, token);
+  } catch (error) {
+    handleLoginError(error);
+  }
 };
 
 // 로그인 제출 처리 함수
@@ -90,54 +89,51 @@ export const handleLoginSubmit = async(
 
         onNavigate("/chatbot");  // 채팅 화면으로 이동
         return null;
-
-    } catch (err: any) {
-        console.error('로그인 제출 중 에러 발생:', err); // 에러 로그 추가
-        return err.message || "로그인 중 알 수 없는 오류가 발생했습니다."; // 기본 메시지 추가
+    } catch (error) {
+        if (error instanceof Error) {  // Error 대신 ApiError로 체크
+            return error.message;
+        }
+        return "로그인 중 알 수 없는 오류가 발생했습니다.";
     }
 };
 
 // 로그인 에러 처리 함수
 const handleLoginError = (error: any) => {
-    if (axios.isAxiosError(error)) {
+    if (axios.isAxiosError(error)) {  // Error 대신 axios.isAxiosError 사용
         // Axios 에러인 경우
-        const response = error.response; // 응답 객체
+        const response = error.response;
         if (response) {
-            const status = response.status; // 상태 코드
-            const message = response.data?.message; // 메시지
+            const status = response.status;
+            const message = response.data?.message;
 
             if (status === 400) {
                 if (message === "Email not found") {
-                    throw new Error("존재하지 않는 이메일입니다.");
+                    throw new ApiError("존재하지 않는 이메일입니다.");
                 } else if (message === "Incorrect password") {
-                    throw new Error("비밀번호가 올바르지 않습니다.");
+                    throw new ApiError("비밀번호가 올바르지 않습니다.");
                 }
             } else if (status === 401) {
-                throw new Error("인증이 실패했습니다. 다시 시도해주세요.");
+                throw new ApiError("인증이 실패했습니다. 다시 시도해주세요.");
             }
-            throw new Error(message || "로그인 요청에 실패했습니다.");
+            throw new ApiError(message || "로그인 요청에 실패했습니다.");
         } else {
             // 응답이 없는 경우
-            throw new Error("서버 응답이 없습니다. 네트워크를 확인하세요.");
+            throw new ApiError("서버 응답이 없습니다. 네트워크를 확인하세요.");
         }
     } else {
         // Axios가 아닌 다른 에러인 경우
-        throw new Error("로그인 중 알 수 없는 오류가 발생했습니다.");
+        throw new ApiError("로그인 중 알 수 없는 오류가 발생했습니다.");
     }
 };
 
 // 로그아웃 처리 함수
 export const handleLogout = async (email: string, logout: () => void): Promise<void> => {
     try {
-        const response = await logoutApi(email); // 로그아웃 API 호출
-        if (response.status === 200) {
-            logout(); // 로그아웃 상태 업데이트
-            console.log(response.data.message); // 성공 메시지 출력
-        } else {
-            throw new Error("로그아웃 요청에 실패했습니다.");
-        }
+        await logoutApi(email); // 성공 여부와 관계없이 클라이언트 측 정리 수행
     } catch (error) {
-        console.error('로그아웃 처리 중 에러 발생:', error);
-        throw new Error("로그아웃 중 알 수 없는 오류가 발생했습니다.");
+        console.error('로그아웃 API 호출 실패:', error);
+    } finally {
+        localStorage.clear();
+        logout();  // 반드시 실행되는 정리 로직
     }
 };
