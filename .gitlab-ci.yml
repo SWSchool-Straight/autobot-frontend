@@ -7,10 +7,6 @@ stages:
 cache:
   paths:
     - node_modules/
-    - yarn.lock
-  key:
-    files:
-      - yarn.lock
 
 build:
   stage: build
@@ -19,7 +15,7 @@ build:
   script:
     - echo "VITE_CHAT_BASE_URL=${CHAT_BASE_URL_PROD}" >> .env
     - echo "VITE_AUTH_BASE_URL=${AUTH_BASE_URL_PROD}" >> .env
-    - yarn install --frozen-lockfile
+    - yarn install
     - yarn build
   artifacts:
     paths:
