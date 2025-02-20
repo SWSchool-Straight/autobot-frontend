@@ -28,6 +28,7 @@
   align-items: flex-start;
   gap: 12px;
   max-width: 80%;
+  margin-bottom: 8px;
 }
 
 .bot-message {
@@ -281,4 +282,24 @@
 
 .login-link:hover {
   background-color: #001f3f;
+}
+
+.message-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.message-time {
+  font-size: 12px;
+  color: #999;
+  margin: 0 8px;
+}
+
+.bot-message .message-time {
+  align-self: flex-start;
+}
+
+.user-message .message-time {
+  align-self: flex-end;
 }

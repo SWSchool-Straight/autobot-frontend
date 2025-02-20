@@ -9,6 +9,7 @@ import LoadingSpinner from '../components/LoadingSpinner';
 import { useAuth } from '../contexts/AuthContext';
 import CarCard from '../components/CarCard';
 import { ApiError, createErrorChatMessage } from '../utils/errorHandler';
+import { format } from 'date-fns';
 
 const ChatbotPage: React.FC = () => {
   const { isAuthenticated } = useAuth();
@@ -222,10 +223,15 @@ const ChatbotPage: React.FC = () => {
           <React.Fragment key={message.messageId}>
             <div className={`message ${message.sender === 'BOT' ? 'bot-message' : 'user-message'}`}>
               {message.sender === 'BOT' && <img src={BotIcon} alt="Bot" className="bot-avatar" />}
-              <div className="message-content">
-                {typeof message.content === 'string' 
-                  ? message.content 
-                  : message.content.query}
+              <div className="message-wrapper">
+                <div className="message-content">
+                  {typeof message.content === 'string' 
+                    ? message.content 
+                    : message.content.query}
+                </div>
+                <div className="message-time">
+                  {format(new Date(message.sentAt), 'HH:mm')}
+                </div>
               </div>
             </div>
             {message.sender === 'BOT' && 
