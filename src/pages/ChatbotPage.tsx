@@ -245,7 +245,8 @@ const ChatbotPage: React.FC = () => {
 
   const LoginBanner = () => (
     <div className="login-banner">
-      <p>로그인하시면 더 많은 대화를 나누실 수 있습니다.</p>
+      <p>게스트로 접속 시 로그아웃하거나 새로고침하면 대화 기록이 사라집니다.</p>
+      <p>로그인하시고 대화 기록을 저장하세요!</p>
       <a href="/login" className="login-button">로그인하기</a>
     </div>
   );

@@ -50,7 +50,7 @@ export const chatService = {
       if (!isAuthenticated) {
         const systemMessage = this.createSystemMessage(
           response.conversationId,
-          '💡 지금 로그인하시면 채팅 기록이 저장됩니다. 로그아웃하거나 새로고침하면 대화 기록이 사라집니다.'
+          '💡 아직 회원이 아닌가요? 로그인하시고 대화 기록을 저장하세요!'
         );
         messages.push(systemMessage);
       }
