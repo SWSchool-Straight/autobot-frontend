@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useState, useRef, useEffect } from 'react';
 import { useLocation, useParams, useNavigate, useBeforeUnload } from 'react-router-dom';
 import { chatService } from '../services/chatService';
-import { ChatMessage } from '../types/chat';
+import { ChatMessage } from '../types/message';
 import '../styles/chatbot-custom.css';
 import BotIcon from '../assets/bot_icon.svg';
 import LoadingSpinner from '../components/LoadingSpinner';
@@ -210,30 +210,53 @@ const ChatbotPage: React.FC = () => {
   // 메시지 전송 처리
   const handleSendMessage = async (e: React.FormEvent, message: string) => {
     e.preventDefault();
-    if (!message.trim() || isLoading) return; // 로딩 중이면 메시지 전송 불가
+    if (!message.trim() || isLoading) return;
 
-    const userMessage = chatService.createUserMessage(message, conversationId || '');
-    setMessages(prev => [...prev, userMessage]);
+    setIsLoading(true);
+    const trimmedMessage = message.trim();
     setInputMessage('');
-    setIsLoading(true); // 로딩 시작
 
     try {
-      const chatResponse = await chatService.sendMessage(conversationId || '', message);
+      // 사용자 메시지 생성 및 표시
+      const userMessage = chatService.createUserMessage(trimmedMessage, conversationId || '');
+      setMessages(prev => [...prev, userMessage]);
+
+      // 봇 응답 요청
+      const chatResponse = await chatService.sendMessage(conversationId || '', trimmedMessage);
+      
+      // 봇 메시지 생성
       const botMessages = chatService.createBotMessages(chatResponse, isAuthenticated);
-      setMessages(prev => [...prev, ...botMessages]);
+      
+      // 전체 메시지 업데이트 (사용자 메시지 유지)
+      setMessages(prev => {
+        const messagesWithoutLoading = prev.filter(msg => msg !== userMessage);
+        return [...messagesWithoutLoading, userMessage, ...botMessages];
+      });
+
     } catch (error) {
-      if (error instanceof ApiError) {
-        const errorMessage = createErrorChatMessage(error, conversationId || '');
-        setMessages(prev => [...prev, errorMessage]);
-        
-        if (error.shouldRedirect && error.redirectPath) {
-          setTimeout(() => {
-            navigate(error.redirectPath as string);
-          }, 3000);
-        }
+      console.error('메시지 전송 오류:', error);
+      
+      // 에러 메시지 생성 및 표시
+      const errorMessage = error instanceof ApiError
+        ? createErrorChatMessage(error, conversationId || '')
+        : chatService.createErrorMessage(
+            conversationId || '',
+            '메시지 전송 중 오류가 발생했습니다.'
+          );
+
+      setMessages(prev => {
+        // 마지막 사용자 메시지는 유지하고 에러 메시지 추가
+        return [...prev, errorMessage];
+      });
+
+      // 리다이렉트가 필요한 경우
+      if (error instanceof ApiError && error.shouldRedirect && error.redirectPath) {
+        setTimeout(() => {
+          navigate(error.redirectPath as string);
+        }, 3000);
       }
     } finally {
-      setIsLoading(false); // 로딩 완료
+      setIsLoading(false);
     }
   };
 
@@ -245,9 +268,11 @@ const ChatbotPage: React.FC = () => {
 
   const LoginBanner = () => (
     <div className="login-banner">
-      <p>게스트로 접속 시 로그아웃하거나 새로고침하면 대화 기록이 사라집니다.</p>
-      <p>로그인하시고 대화 기록을 저장하세요!</p>
-      <a href="/login" className="login-button">로그인하기</a>
+      <p>게스트로 접속 시 로그아웃하거나 새로고침하면 대화 기록이 사라집니다. 로그인하시고 대화 기록을 저장하세요!</p>
+      <div className="buttons">
+        <a href="/login" className="login-button">로그인하기</a>
+        <a href="/signup" className="signup-button">회원가입하기</a>
+      </div>
     </div>
   );
 
@@ -256,8 +281,8 @@ const ChatbotPage: React.FC = () => {
       {!isAuthenticated && <LoginBanner />}
       {isPageLoading && <LoadingSpinner />}
       <div className="chatbot-messages">
-        {messages.map((message) => (
-          <React.Fragment key={message.messageId}>
+        {messages.map((message, index) => (
+          <React.Fragment key={`${message.conversationId}-${message.sentAt}-${index}`}>
             <div 
               className={`message ${message.sender === 'BOT' ? 'bot-message' : 'user-message'}`}
               data-is-system={message.isSystemMessage}

@@ -1,34 +1,14 @@
-export type Sender = 'USER' | 'BOT' | 'SYSTEM';
-
-// 기본 메시지 타입
-interface BaseMessage {
-  messageId: number;
+export interface BotApiResponse {
+  createdAt: string;
+  bedrockResponse: BedrockResponse;
   conversationId: string;
-  sender: Sender;
-  sentAt: string;
-  isSystemMessage?: boolean;
+  title: string;
 }
 
-// 사용자 메시지
-export interface UserMessage extends BaseMessage {
-  sender: 'USER';
-  content: string;
-}
-
-// 봇 메시지
-export interface BotChatMessage extends BaseMessage {
-  sender: 'BOT';
-  content: string | BedrockResponse;
+export interface BedrockResponse {
+  query: string;
   goods?: CarInfo[];
 }
-
-// 에러 메시지
-export interface SystemMessage extends BaseMessage {
-  sender: 'SYSTEM';
-  content: string;
-}
-
-export type ChatMessage = UserMessage | BotChatMessage | SystemMessage;
 
 export interface CarInfo {
   goodsNo: string;
@@ -44,19 +24,6 @@ export interface CarInfo {
   savingsAmount: string;
   exteriorColor: string;
   predictedPrice: number;
-}
-
-export interface BedrockResponse {
-  query: string;
-  goods: CarInfo[];
-}
-
-// 채팅 메시지 전송 후 받는 봇 응답
-export interface BotMessage {
-  createdAt: string;
-  bedrockResponse: BedrockResponse;
-  conversationId: string;
-  title: string;
 }
 
 // 대화 목록 조회시 사용하는 타입
