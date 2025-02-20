@@ -57,23 +57,19 @@ const ChatbotPage: React.FC = () => {
             const botMessages = chatService.createBotMessages(response, isAuthenticated);
             setMessages([userMessage, ...botMessages]);
           } catch (error) {
-            if (error instanceof ApiError) {
-              // 사용자 메시지는 유지하고 에러 메시지를 시스템 메시지로 표시
-              const errorMessage = chatService.createErrorMessage(
-                conversationId,
-                error.message + (error.shouldRetry ? ' 잠시 후 다시 시도해 주세요.' : '')
-              );
-              setMessages([userMessage, errorMessage]);
-            }
+            // 에러 메시지 처리 수정
+            const errorMessage = chatService.createErrorMessage(
+              conversationId,
+              '죄송합니다. 메시지 전송 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.'
+            );
+            setMessages([userMessage, errorMessage]);
           }
           
           initialMessage.current = null;
         } 
         else if (isAuthenticated) {
           try {
-            // 채팅 기록 로드
             const response = await chatService.getChathistory(conversationId);
-            
             if (response.length === 0) {
               if (location.state?.initialMessage) {
                 const message = location.state.initialMessage;
@@ -97,11 +93,7 @@ const ChatbotPage: React.FC = () => {
             console.error('채팅 초기화 중 오류 발생:', error);
             const errorMessage = chatService.createErrorMessage(
               conversationId,
-              error instanceof ApiError && error.status === 404
-                ? '채팅 기록이 존재하지 않습니다.'
-                : error instanceof ApiError 
-                  ? error.message + (error.shouldRetry ? ' 잠시 후 다시 시도해 주세요.' : '')
-                  : '죄송합니다. 채팅을 시작할 수 없습니다. 잠시 후 다시 시도해 주세요.'
+              '대화 기록을 불러올 수 없습니다. 잠시 후 다시 시도해 주세요.'
             );
             setMessages([errorMessage]);
           }
@@ -111,9 +103,7 @@ const ChatbotPage: React.FC = () => {
         console.error('채팅 초기화 중 오류 발생:', error);
         const errorMessage = chatService.createErrorMessage(
           conversationId,
-          error instanceof ApiError 
-            ? error.message + (error.shouldRetry ? ' 잠시 후 다시 시도해 주세요.' : '')
-            : '죄송합니다. 채팅을 시작할 수 없습니다. 잠시 후 다시 시도해 주세요.'
+          '채팅을 시작할 수 없습니다. 잠시 후 다시 시도해 주세요.'
         );
         setMessages([errorMessage]);
       } finally {
@@ -174,8 +164,7 @@ const ChatbotPage: React.FC = () => {
   useEffect(() => {
     if (!isAuthenticated) {
       return () => {
-        sessionStorage.removeItem('chatMessages');
-        sessionStorage.removeItem('currentConversationId');
+        sessionStorage.clear();
       };
     }
   }, [isAuthenticated]);
@@ -236,25 +225,24 @@ const ChatbotPage: React.FC = () => {
     } catch (error) {
       console.error('메시지 전송 오류:', error);
       
-      // 에러 메시지 생성 및 표시
-      const errorMessage = error instanceof ApiError
-        ? createErrorChatMessage(error, conversationId || '')
-        : chatService.createErrorMessage(
-            conversationId || '',
-            '메시지 전송 중 오류가 발생했습니다.'
-          );
-
-      setMessages(prev => {
-        // 마지막 사용자 메시지는 유지하고 에러 메시지 추가
-        return [...prev, errorMessage];
-      });
-
-      // 리다이렉트가 필요한 경우
-      if (error instanceof ApiError && error.shouldRedirect && error.redirectPath) {
+      let errorMessage;
+      if (error instanceof ApiError && error.shouldRedirect) {
+        errorMessage = chatService.createErrorMessage(
+          conversationId || '',
+          '로그인이 필요한 서비스입니다.'
+        );
+        // 리다이렉트 처리
         setTimeout(() => {
-          navigate(error.redirectPath as string);
+          navigate('/login');
         }, 3000);
+      } else {
+        errorMessage = chatService.createErrorMessage(
+          conversationId || '',
+          '메시지 전송 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.'
+        );
       }
+
+      setMessages(prev => [...prev, errorMessage]);
     } finally {
       setIsLoading(false);
     }

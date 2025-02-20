@@ -1,8 +1,8 @@
 import { authApiClient } from "./apiClient";
 import { ApiResponse } from '../types/apiResponse';
 import { handleApiError } from '../utils/errorHandler';
-
-export const refreshTokenApi = async (email: string): Promise<ApiResponse> => {
+import { AxiosResponse } from 'axios';
+export const refreshTokenApi = async (email: string): Promise<AxiosResponse<ApiResponse>> => {
     try {
         const response = await authApiClient.post('/api/members/refresh', {
             email
