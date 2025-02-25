@@ -19,7 +19,8 @@ const CarCard: React.FC<CarCardProps> = ({ car, onCardClick }) => {
     
     // 잠시 로딩을 보여준 후 페이지 이동
     setTimeout(() => {
-      onCardClick(e, car.detailUrl);
+      // onCardClick(e, car.detailUrl);
+      window.open(car.detailUrl, '_blank');  // window.open으로 직접 URL 열기
       setIsLoading(false);
     }, 500); // 0.5초 동안 로딩 표시
   };
@@ -31,6 +32,10 @@ const CarCard: React.FC<CarCardProps> = ({ car, onCardClick }) => {
         href={car.detailUrl} 
         className="car-card" 
         onClick={handleClick}
+        onTouchEnd={(e) => {
+          e.preventDefault();
+          handleClick(e as any);
+        }}
         target="_blank" 
         rel="noopener noreferrer"
       >

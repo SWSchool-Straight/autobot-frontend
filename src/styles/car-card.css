@@ -12,6 +12,8 @@
   display: flex;
   flex-direction: column;
   margin: 0 auto;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
 }
 
 .car-card:hover {
