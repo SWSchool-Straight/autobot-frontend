@@ -13,16 +13,37 @@ interface CarCardProps {
 const CarCard: React.FC<CarCardProps> = ({ car, onCardClick }) => {
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleClick = async (e: React.MouseEvent<HTMLAnchorElement>) => {
+  const handleClick = async (e: React.MouseEvent<HTMLAnchorElement> | React.TouchEvent<HTMLAnchorElement>) => {
     e.preventDefault();
     setIsLoading(true);
     
-    // 잠시 로딩을 보여준 후 페이지 이동
-    setTimeout(() => {
-      // onCardClick(e, car.detailUrl);
-      window.open(car.detailUrl, '_blank');  // window.open으로 직접 URL 열기
+    if (!car.detailUrl) {
+      console.error('상세 페이지 URL이 없습니다.');
       setIsLoading(false);
-    }, 500); // 0.5초 동안 로딩 표시
+      return;
+    }
+
+    // URL을 모바일 환경에 맞게 변환
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+    let targetUrl = car.detailUrl;
+    
+    if (isMobile) {
+      try {
+        const url = new URL(car.detailUrl);
+        // www. 도메인을 m. 도메인으로 변경
+        if (url.hostname.startsWith('www.')) {
+          url.hostname = 'm.' + url.hostname.substring(4);
+          targetUrl = url.href;
+        }
+      } catch (error) {
+        console.error('URL 처리 중 오류:', error);
+      }
+    }
+
+    setTimeout(() => {
+      window.open(targetUrl, '_blank', 'noopener,noreferrer');
+      setIsLoading(false);
+    }, 500);
   };
 
   return (
