@@ -13,35 +13,29 @@ interface CarCardProps {
 const CarCard: React.FC<CarCardProps> = ({ car, onCardClick }) => {
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleClick = async (e: React.MouseEvent<HTMLAnchorElement> | React.TouchEvent<HTMLAnchorElement>) => {
+  // 모바일 여부를 확인하는 함수
+  const isMobile = () => {
+    return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+  };
+
+  // URL을 모바일/PC 버전으로 변환하는 함수
+  const getAdjustedUrl = (url: string): string => {
+    if (isMobile()) {
+      // PC URL을 모바일 URL로 변환
+      return url.replace('/p/goods/', '/m/goods/');
+    }
+    return url;
+  };
+
+  const handleClick = async (e: React.MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault();
     setIsLoading(true);
     
-    if (!car.detailUrl) {
-      console.error('상세 페이지 URL이 없습니다.');
-      setIsLoading(false);
-      return;
-    }
-
-    // URL을 모바일 환경에 맞게 변환
-    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-    let targetUrl = car.detailUrl;
+    // 디바이스에 맞는 URL 생성
+    const adjustedUrl = getAdjustedUrl(car.detailUrl);
     
-    if (isMobile) {
-      try {
-        const url = new URL(car.detailUrl);
-        // www. 도메인을 m. 도메인으로 변경
-        if (url.hostname.startsWith('www.')) {
-          url.hostname = 'm.' + url.hostname.substring(4);
-          targetUrl = url.href;
-        }
-      } catch (error) {
-        console.error('URL 처리 중 오류:', error);
-      }
-    }
-
     setTimeout(() => {
-      window.open(targetUrl, '_blank', 'noopener,noreferrer');
+      window.open(adjustedUrl, '_blank');
       setIsLoading(false);
     }, 500);
   };
@@ -50,13 +44,9 @@ const CarCard: React.FC<CarCardProps> = ({ car, onCardClick }) => {
     <>
       {isLoading && <LoadingSpinner />}
       <a 
-        href={car.detailUrl} 
+        href={getAdjustedUrl(car.detailUrl)} 
         className="car-card" 
         onClick={handleClick}
-        onTouchEnd={(e) => {
-          e.preventDefault();
-          handleClick(e as any);
-        }}
         target="_blank" 
         rel="noopener noreferrer"
       >
