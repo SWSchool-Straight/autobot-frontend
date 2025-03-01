@@ -33,7 +33,7 @@ export default function WelcomeChat({ onStartChat }: WelcomeChatProps) {
             <button onClick={() => handleExampleClick("4인 가족 캠핑을 위한 중고차 찾아줘")}>
               4인 가족 캠핑을 위한 중고차 찾아줘
             </button>
-            <button onClick={() => handleExampleClick("스마트크루즈 컨트롤 옵션이 뭐야?")}>
+            <button onClick={() => handleExampleClick("스마트 크루즈 컨트롤 옵션이 뭐야?")}>
               스마트 크루즈 컨트롤 옵션이 뭐야?
             </button>
           </div>

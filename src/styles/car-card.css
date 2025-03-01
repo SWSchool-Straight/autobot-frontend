@@ -161,4 +161,46 @@
   font-weight: normal;
   margin-right: 0.5rem;
 }
+
+/* 모바일 화면 대응 */
+@media (max-width: 768px) {
+  .car-card {
+    width: 100%;
+    min-width: auto;  /* min-width 제거 */
+    height: auto;     /* 높이 자동 조정 */
+    margin: 0;
+  }
+
+  .car-card img {
+    width: 100%;
+    height: 40vw;    /* 뷰포트 너비의 40%로 설정 */
+    max-height: 200px; /* 최대 높이 제한 */
+    min-height: 150px; /* 최소 높이 설정 */
+    object-fit: cover;
+  }
+
+  .car-info {
+    padding: 12px;
+    min-height: auto;  /* 최소 높이 제거 */
+  }
+
+  .car-info h3 {
+    font-size: 0.9rem;
+    min-height: auto;  /* 최소 높이 제거 */
+    max-height: 2.6em; /* 최대 높이 제한 */
+    overflow: hidden;
+  }
+}
+
+/* 작은 모바일 화면 대응 */
+@media (max-width: 480px) {
+  .car-card img {
+    height: 45vw;     /* 더 작은 화면에서는 뷰포트 너비의 45%로 설정 */
+    min-height: 140px; /* 최소 높이 조정 */
+  }
+
+  .car-info {
+    padding: 10px;
+  }
+}
   
