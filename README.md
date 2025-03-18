@@ -77,16 +77,17 @@ VITE_AUTH_BASE_URL=your_auth_api_url
 yarn dev
 ```
 
-### 🐳 Docker로 실행하기
+<br/>
+## 🐳 Docker로 실행하기
 
 1. Docker 이미지 다운로드
 ```bash
 docker pull bestlalala/autobot-app:1.0.1
 ```
 
-> ⚠️ 이 이미지는 linux/amd64 아키텍처에 최적화되어 있습니다. 
-> Apple Silicon(M1/M2) Mac 사용자는 Rosetta 2를 통해 실행되며, 성능 저하가 있을 수 있습니다.
-> bestlalala/autobot-app:1.0.0 이미지는 linux/arm64/v8 아키텍처에 최적화되어 있습니다.
+> ⚠️ 이 이미지는 linux/amd64 아키텍처에 최적화되어 있습니다. <br/>
+> Apple Silicon(M1/M2) Mac 사용자는 Rosetta 2를 통해 실행되며, 성능 저하가 있을 수 있습니다. <br/>
+> bestlalala/autobot-app:1.0.0 이미지는 linux/arm64/v8 아키텍처에 최적화되어 있습니다. 
 
 
 2. Docker Compose로 실행
@@ -119,22 +120,6 @@ docker-compose up -d
 
 <br/>
 
-## 🏗 프로젝트 구조
-
-```
-src/
-├── api/        # API 클라이언트 및 통신 관련
-├── assets/     # 이미지, 아이콘 등 정적 파일
-├── components/ # 재사용 가능한 컴포넌트
-├── contexts/   # React Context
-├── pages/      # 페이지 컴포넌트
-├── services/   # 비즈니스 로직
-├── styles/     # CSS 스타일
-├── types/      # TypeScript 타입 정의
-└── utils/      # 유틸리티 함수
-```
-
-<br/>
 
 ## 🔒 보안 및 인증
 
