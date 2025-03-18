@@ -77,6 +77,63 @@ VITE_AUTH_BASE_URL=your_auth_api_url
 yarn dev
 ```
 
+### 🐳 Docker로 실행하기
+
+1. Docker 이미지 다운로드
+```bash
+docker pull bestlalala/autobot-app:1.0.1
+```
+
+> ⚠️ 이 이미지는 linux/amd64 아키텍처에 최적화되어 있습니다. 
+> Apple Silicon(M1/M2) Mac 사용자는 Rosetta 2를 통해 실행되며, 성능 저하가 있을 수 있습니다.
+> bestlalala/autobot-app:1.0.0 이미지는 linux/arm64/v8 아키텍처에 최적화되어 있습니다.
+
+
+2. Docker Compose로 실행
+```yaml
+# docker-compose.yml 파일 생성
+version: '3.8'
+services:
+  frontend:
+    image: bestlalala/autobot-app:1.0.1
+    platform: linux/amd64 
+    ports:
+      - "80:80"
+    environment:
+      - VITE_AUTH_BASE_URL=http://localhost:8080
+      - VITE_CHAT_BASE_URL=http://localhost:8080
+    depends_on:
+      - app
+```
+
+3. 실행
+```bash
+docker-compose up -d
+```
+
+### 환경변수 설정
+| 변수명 | 설명 | 기본값 |
+|--------|------|---------|
+| VITE_AUTH_BASE_URL | 인증 API 서버 주소 | http://localhost:8080 |
+| VITE_CHAT_BASE_URL | 채팅 API 서버 주소 | http://localhost:8080 |
+
+<br/>
+
+## 🏗 프로젝트 구조
+
+```
+src/
+├── api/        # API 클라이언트 및 통신 관련
+├── assets/     # 이미지, 아이콘 등 정적 파일
+├── components/ # 재사용 가능한 컴포넌트
+├── contexts/   # React Context
+├── pages/      # 페이지 컴포넌트
+├── services/   # 비즈니스 로직
+├── styles/     # CSS 스타일
+├── types/      # TypeScript 타입 정의
+└── utils/      # 유틸리티 함수
+```
+
 <br/>
 
 ## 🔒 보안 및 인증
@@ -85,16 +142,6 @@ yarn dev
 - Access Token & Refresh Token 활용
 - 로그인/로그아웃 상태 관리
 - 인증된 사용자 대화 기록 저장
-
-<br/>
-
-## 🤝 기여하기
-
-1. Fork the Project
-2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the Branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
 
 <br/>
 
