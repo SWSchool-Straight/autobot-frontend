@@ -4,10 +4,6 @@ FROM --platform=linux/amd64 node:20-alpine
 # 작업 디렉토리 설정
 WORKDIR /app
 
-# 환경변수 설정
-ENV VITE_AUTH_BASE_URL=http://localhost:8080 
-ENV VITE_CHAT_BASE_URL=http://localhost:8080 
-
 # package.json과 yarn.lock 복사
 COPY package.json yarn.lock ./
 
@@ -23,8 +19,8 @@ RUN yarn build
 # Nginx 이미지 사용 (linux/amd64 플랫폼 지정)
 FROM --platform=linux/amd64 nginx:alpine
 
-# Nginx 설정 파일 복사 (필요한 경우)
-# COPY nginx.conf /etc/nginx/conf.d/default.conf
+# Nginx 설정 파일 복사
+COPY nginx.conf /etc/nginx/conf.d/default.conf
 
 # 빌드된 파일을 Nginx의 서빙 디렉토리로 복사
 COPY --from=0 /app/dist /usr/share/nginx/html

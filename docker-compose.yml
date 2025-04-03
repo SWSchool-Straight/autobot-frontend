@@ -2,8 +2,11 @@ version: '3.8'
 services:
   frontend:
     image: bestlalala/autobot-app:1.0.1
+    platform: linux/amd64
     ports:
       - "80:80"
     environment:
-      - VITE_AUTH_BASE_URL=http://your-custom-url:8080
-      - VITE_CHAT_BASE_URL=http://your-custom-url:8080
+      - VITE_AUTH_BASE_URL=/api
+      - VITE_CHAT_BASE_URL=/api
+    depends_on:
+      - backend
